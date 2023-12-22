@@ -1,7 +1,6 @@
 use anyhow::Context;
 use sqlx::{Sqlite, SqlitePool};
 use sqlx::migrate::MigrateDatabase;
-use sqlx::sqlite::SqliteQueryResult;
 use tokio::sync::Mutex;
 
 // Database connector
@@ -39,20 +38,20 @@ pub async fn init() -> anyhow::Result<&'static str> {
 }
 
 // Database setup
-async fn setup() -> anyhow::Result<SqliteQueryResult> {
+async fn setup() -> anyhow::Result<()> {
     // Create a database connector
     let conn = SqlitePool::connect(&get_db_path())
         .await
         .context("db::setup : Create database connector")?;
 
-    // Setup database tables
-    let init_table = sqlx::query("CREATE TABLE IF NOT EXISTS travel (country VARCHAR(250) NOT NULL)")
-        .execute(&conn)
+    // Apply migrations
+    let migrations_result = sqlx::migrate!("./migrations")
+        .run(&conn)
         .await
-        .context("db::setup : Performing query")?;
-
+        .context("db::setup : Performing migrations")?;
     // Return the result of the query
-    Ok(init_table)
+
+    Ok(migrations_result)
 }
 
 // Get the path where the database file should be located.
