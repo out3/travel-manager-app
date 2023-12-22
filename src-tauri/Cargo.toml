@@ -22,6 +22,7 @@ dirs = "5.0.1"
 # Database SQLite
 tokio = { version = "1.0.0", features = ["full"] }
 sqlx = { version = "0.7.3", features = ["sqlite", "runtime-tokio"] }
+anyhow = "1.0.76"
 
 
 [features]

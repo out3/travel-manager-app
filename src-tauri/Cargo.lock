@@ -77,17 +77,16 @@ dependencies = [
 
 [[package]]
 name = "anyhow"
-version = "1.0.75"
+version = "1.0.76"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "a4668cab20f66d8d020e1fbc0ebe47217433c1b6c8f2040faf858554e394ace6"
+checksum = "59d2a3357dde987206219e78ecfbbb6e8dad06cbb65292758d3270e6254f7355"
 
 [[package]]
 name = "app"
 version = "0.1.0"
 dependencies = [
+ "anyhow",
  "dirs",
- "iso_currency",
- "isocountry",
  "serde",
  "serde_json",
  "sqlx",
@@ -1554,34 +1553,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "7a5bbe824c507c5da5956355e86a746d82e0e1464f65d862cc5e71da70e94b2c"
 dependencies = [
  "cfg-if",
-]
-
-[[package]]
-name = "iso_country"
-version = "0.1.4"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "20633e788d3948ea7336861fdb09ec247f5dae4267e8f0743fa97de26c28624d"
-dependencies = [
- "lazy_static",
-]
-
-[[package]]
-name = "iso_currency"
-version = "0.4.4"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "33f07181be95c82347a07cf4caf43d2acd8a7e8d08ef1db75e10ed5a9aec3c1b"
-dependencies = [
- "iso_country",
-]
-
-[[package]]
-name = "isocountry"
-version = "0.3.2"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "1ea1dc4bf0fb4904ba83ffdb98af3d9c325274e92e6e295e4151e86c96363e04"
-dependencies = [
- "serde",
- "thiserror",
 ]
 
 [[package]]
