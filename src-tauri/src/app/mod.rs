@@ -1,3 +1,3 @@
 pub mod travel;
 pub mod utils;
-pub mod country_iso_wrapper;
+pub mod country;
