@@ -16,7 +16,7 @@ async fn main() {
         .invoke_handler(tauri::generate_handler![
             app::travel::get_travels,
             app::travel::create_travel,
-            app::country::get_countries,
+            app::utils::get_countries,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
