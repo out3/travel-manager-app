@@ -6,11 +6,7 @@ import {useEffect, useState} from 'react';
 
 interface Travel {
     rowid: bigint,
-    country: IsoCountry,
-}
-
-interface IsoCountry {
-    country: string
+    country: Country,
 }
 
 interface Country {
@@ -74,7 +70,7 @@ function TravelManager() {
             </div>
             <ul>
                 {travels.map((travel: Travel) => (
-                    <li key={travel.rowid}>{travel.country.country}</li>
+                    <li key={travel.rowid}>{travel.country.name}</li>
                 ))}
             </ul>
         </>

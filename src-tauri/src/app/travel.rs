@@ -1,14 +1,14 @@
 use isocountry::CountryCode;
 use serde::Serialize;
 use sqlx::FromRow;
-use crate::app::country_iso_wrapper::CountryIsoWrapper;
+use crate::app::country::Country;
 
 use crate::db;
 
 #[derive(Debug, Clone, FromRow, Serialize)]
 pub struct Travel {
     rowid: i64,
-    country: CountryIsoWrapper,
+    country: Country,
 }
 
 // Get all travels
@@ -28,7 +28,7 @@ pub async fn get_travels(
         .fetch_all(&*conn)
         .await
         .map_err(|e| e.to_string());
-    dbg!(all_travels)
+    all_travels
 }
 
 // Create one travel
@@ -41,7 +41,7 @@ pub async fn create_travel(
     let conn = conn.db.lock().await;
 
     // Create country object
-    let country_wrapper: CountryIsoWrapper = CountryCode::for_alpha3(&*country)
+    let country_wrapper: Country = CountryCode::for_alpha3(&*country)
         .map_err(|e| e.to_string())?
         .into();
 
