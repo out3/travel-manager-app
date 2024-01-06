@@ -7,6 +7,7 @@ import {useEffect, useState} from 'react';
 interface Travel {
     rowid: bigint,
     country: Country,
+    currency: string
 }
 
 interface Country {
@@ -19,8 +20,9 @@ function TravelManager() {
     const [travels, setTravels] = useState<Travel[]>([]);
     // List of countries available for dropdown
     const [countries, setCountries] = useState<Country[]>([]);
-    // Country used to create a new travel
-    const [travelToAdd, setTravelToAdd] = useState<String>("")
+    // Variables used to create a new travel
+    const [newCountry, setNewCountry] = useState<string>("");
+    const [newCurrency, setNewCurrency] = useState<string>("");
 
     useEffect(() => {
         fetchTravels();
@@ -29,15 +31,15 @@ function TravelManager() {
 
     function fetchTravels(): void {
         (invoke('get_travels') as Promise<Travel[]>)
-            .then((data: Travel[]) => {
-                setTravels(data);
-                console.log(data);
-            })
+            .then((data: Travel[]) => {setTravels(data)})
             .catch((err: string) => console.error(err));
     }
 
     function createTravel(): void {
-        (invoke('create_travel', {country: travelToAdd}) as Promise<Travel>)
+        (invoke('create_travel', {
+            country: newCountry,
+            currency: newCurrency
+        }) as Promise<Travel>)
             .then(() => fetchTravels())
             .catch((err: string) => console.error(err))
     }
@@ -46,7 +48,7 @@ function TravelManager() {
         (invoke('get_countries') as Promise<Country[]>)
             .then((data: Country[]) => {
                 setCountries(data);
-                setTravelToAdd(data[0].code);
+                setNewCountry(data[0].code);
             })
             .catch((err: string) => console.error(err));
     }
@@ -55,22 +57,34 @@ function TravelManager() {
         <>
             <h1>Travel List</h1>
             <div>
-                <select
-                    onChange={event => setTravelToAdd(event.target.value)}
-                >
-                    {countries.map((country) => (
-                        <option key={country.code} value={country.code}>{country.name}</option>
-                    ))}
-                </select>
-                <input
-                    type="button"
-                    value="Create Travel"
-                    onClick={createTravel}
-                />
+                <form onSubmit={createTravel}>
+                    <label>
+                        Country :
+                        <select
+                            onChange={e => setNewCountry(e.target.value)}
+                        >
+                            {countries.map((country) => (
+                                <option key={country.code} value={country.code}>{country.name}</option>
+                            ))}
+                        </select>
+                    </label>
+                    <label>
+                        Currency :
+                        <input
+                            type="text"
+                            placeholder="Enter currency"
+                            defaultValue={newCurrency}
+                            onChange={(e) => setNewCurrency(e.target.value)}
+                        />
+                    </label>
+                    <button type="submit">
+                        Create Travel
+                    </button>
+                </form>
             </div>
             <ul>
                 {travels.map((travel: Travel) => (
-                    <li key={travel.rowid}>{travel.country.name}</li>
+                    <li key={travel.rowid}>{travel.country.name} ({travel.currency})</li>
                 ))}
             </ul>
         </>

@@ -9,6 +9,7 @@ use crate::db;
 pub struct Travel {
     rowid: i64,
     country: Country,
+    currency: String
 }
 
 // Get all travels
@@ -36,6 +37,7 @@ pub async fn get_travels(
 pub async fn create_travel(
     conn: tauri::State<'_, db::DbConnection>,
     country: String,
+    currency: String
 ) -> Result<Travel, String> {
     // Lock mutex
     let conn = conn.db.lock().await;
@@ -47,11 +49,12 @@ pub async fn create_travel(
 
     // Perform query
     let travel_created = sqlx::query_as::<_, Travel>("
-        INSERT INTO travel (country)
-        VALUES (?)
+        INSERT INTO travel (country, currency)
+        VALUES ($1, $2)
         RETURNING ROWID, *
     ")
         .bind(country_wrapper)
+        .bind(currency)
         .fetch_one(&*conn)
         .await
         .map_err(|e| e.to_string());
