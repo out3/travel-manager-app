@@ -1,6 +1,6 @@
 [package]
 name = "travel-manager-app"
-version = "0.1.1"
+version = "0.2.0"
 description = "An application to manage travel's expenses and places to visit"
 authors = ["Philippe Lopes"]
 license = ""
@@ -21,8 +21,10 @@ dirs = "5.0.1"
 # Database SQLite
 tokio = { version = "1.0.0", features = ["full"] }
 sqlx = { version = "0.7.3", features = ["sqlite", "runtime-tokio"] }
+# Error handler
 anyhow = "1.0.76"
-
+# ISO
+isocountry = { version = "0.3.2" }
 
 [features]
 # this feature is used for production builds or when `devPath` points to the filesystem and the built-in dev server is disabled.
