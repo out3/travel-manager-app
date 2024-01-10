@@ -2,6 +2,7 @@ use isocountry::CountryCode;
 use serde::Serialize;
 use sqlx::FromRow;
 use crate::app::country::Country;
+use crate::app::currency::Currency;
 
 use crate::db;
 
@@ -9,7 +10,7 @@ use crate::db;
 pub struct Travel {
     rowid: i64,
     country: Country,
-    currency: String
+    currency: Currency
 }
 
 // Get all travels
@@ -42,9 +43,12 @@ pub async fn create_travel(
     // Lock mutex
     let conn = conn.db.lock().await;
 
-    // Create country object
+    // Create country and currency object
     let country_wrapper: Country = CountryCode::for_alpha3(&*country)
         .map_err(|e| e.to_string())?
+        .into();
+    let currency_wrapper: Currency = iso_currency::Currency::from_code(&*currency)
+        .ok_or("Currency unknown".to_string())?
         .into();
 
     // Perform query
@@ -54,7 +58,7 @@ pub async fn create_travel(
         RETURNING ROWID, *
     ")
         .bind(country_wrapper)
-        .bind(currency)
+        .bind(currency_wrapper)
         .fetch_one(&*conn)
         .await
         .map_err(|e| e.to_string());

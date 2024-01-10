@@ -7,7 +7,7 @@ import {useEffect, useState} from 'react';
 interface Travel {
     rowid: bigint,
     country: Country,
-    currency: string
+    currency: Currency
 }
 
 interface Country {
@@ -15,11 +15,17 @@ interface Country {
     name: string,
 }
 
+interface Currency {
+    code: string,
+    symbol : string
+}
+
 function TravelManager() {
     // List of every travels
     const [travels, setTravels] = useState<Travel[]>([]);
     // List of countries available for dropdown
     const [countries, setCountries] = useState<Country[]>([]);
+    const [currencies, setCurrencies] = useState<Currency[]>([]);
     // Variables used to create a new travel
     const [newCountry, setNewCountry] = useState<string>("");
     const [newCurrency, setNewCurrency] = useState<string>("");
@@ -27,11 +33,18 @@ function TravelManager() {
     useEffect(() => {
         fetchTravels();
         fetchCountries();
+        fetchCurrencies();
     }, []);
 
     function fetchTravels(): void {
         (invoke('get_travels') as Promise<Travel[]>)
             .then((data: Travel[]) => {setTravels(data)})
+            .catch((err: string) => console.error(err));
+    }
+
+    function fetchCurrencies(): void {
+        (invoke('get_currencies') as Promise<Currency[]>)
+            .then((data: Currency[]) => {setCurrencies(data)})
             .catch((err: string) => console.error(err));
     }
 
@@ -70,12 +83,13 @@ function TravelManager() {
                     </label>
                     <label>
                         Currency :
-                        <input
-                            type="text"
-                            placeholder="Enter currency"
-                            defaultValue={newCurrency}
-                            onChange={(e) => setNewCurrency(e.target.value)}
-                        />
+                        <select
+                            onChange={e => setNewCurrency(e.target.value)}
+                        >
+                            {currencies.map((currency) => (
+                                <option key={currency.code} value={currency.code}>{currency.code} ({currency.symbol})</option>
+                            ))}
+                        </select>
                     </label>
                     <button type="submit">
                         Create Travel
@@ -84,7 +98,7 @@ function TravelManager() {
             </div>
             <ul>
                 {travels.map((travel: Travel) => (
-                    <li key={travel.rowid}>{travel.country.name} ({travel.currency})</li>
+                    <li key={travel.rowid}>{travel.country.name} | {travel.currency.code} ({travel.currency.symbol})</li>
                 ))}
             </ul>
         </>
