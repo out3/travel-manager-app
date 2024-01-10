@@ -6,6 +6,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [0.3.0] - ???
+### Added
+- `Travel` now defines `Currency` from `isocurrency` crate
+- Function to fetch every currency
+- Tests for `Currency` methods `try_from` and `into`
+
 ### Changed
 - `Country` parameters type changed from `&'static` to `String`
 
