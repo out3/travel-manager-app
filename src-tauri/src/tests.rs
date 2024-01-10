@@ -3,8 +3,6 @@ mod tests {
     use isocountry::CountryCode;
 
     use crate::app::country::Country;
-    use crate::app::utils;
-
 
     // CountryIsoWrapper tests
     #[test]
@@ -26,8 +24,8 @@ mod tests {
         // Into : success
         let country_into: Country = CountryCode::FRA.into();
         assert_eq!(country_into, Country {
-            code: "FRA",
-            name: "France"
+            code: String::from("FRA"),
+            name: String::from("France"),
         })
     }
 }
