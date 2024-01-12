@@ -20,12 +20,13 @@ tauri = { version = "1.5.3", features = [] }
 dirs = "5.0.1"
 # Database SQLite
 tokio = { version = "1.0.0", features = ["full"] }
-sqlx = { version = "0.7.3", features = ["sqlite", "runtime-tokio"] }
+sqlx = { version = "0.7.3", features = ["sqlite", "runtime-tokio", "chrono"] }
 # Error handler
 anyhow = "1.0.76"
 # ISO
 isocountry = { version = "0.3.2" }
 iso_currency = { version = "0.4.4", features = ["iterator"] }
+chrono = { version = "0.4.31", features = ["serde"] }
 
 [features]
 # this feature is used for production builds or when `devPath` points to the filesystem and the built-in dev server is disabled.
