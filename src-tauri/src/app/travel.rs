@@ -1,16 +1,19 @@
 use isocountry::CountryCode;
 use serde::Serialize;
 use sqlx::FromRow;
+use chrono::NaiveDate;
+
 use crate::app::country::Country;
 use crate::app::currency::Currency;
-
 use crate::db;
 
 #[derive(Debug, Clone, FromRow, Serialize)]
 pub struct Travel {
     rowid: i64,
     country: Country,
-    currency: Currency
+    currency: Currency,
+    start_date: Option<NaiveDate>,
+    end_date: Option<NaiveDate>
 }
 
 // Get all travels
@@ -53,12 +56,14 @@ pub async fn create_travel(
 
     // Perform query
     let travel_created = sqlx::query_as::<_, Travel>("
-        INSERT INTO travel (country, currency)
-        VALUES ($1, $2)
+        INSERT INTO travel (country, currency, start_date, end_date)
+        VALUES ($1, $2, $3, $4)
         RETURNING ROWID, *
     ")
         .bind(country_wrapper)
         .bind(currency_wrapper)
+        .bind(NaiveDate::from_num_days_from_ce_opt(1))
+        .bind(NaiveDate::from_num_days_from_ce_opt(2))
         .fetch_one(&*conn)
         .await
         .map_err(|e| e.to_string());

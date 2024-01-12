@@ -7,7 +7,9 @@ import {useEffect, useState} from 'react';
 interface Travel {
     rowid: bigint,
     country: Country,
-    currency: Currency
+    currency: Currency,
+    start_date: String,
+    end_date: String
 }
 
 interface Country {
@@ -98,7 +100,7 @@ function TravelManager() {
             </div>
             <ul>
                 {travels.map((travel: Travel) => (
-                    <li key={travel.rowid}>{travel.country.name} | {travel.currency.code} ({travel.currency.symbol})</li>
+                    <li key={travel.rowid}>{travel.country.name} | {travel.currency.code} ({travel.currency.symbol}) | {travel.start_date} {'>'} {travel.end_date}</li>
                 ))}
             </ul>
         </>
