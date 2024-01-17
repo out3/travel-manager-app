@@ -36,6 +36,29 @@ pub async fn get_travels(
     all_travels
 }
 
+// Get one travel
+#[tauri::command]
+pub async fn get_travel(
+    conn: tauri::State<'_, db::DbConnection>,
+    travel_id: isize
+) -> Result<Travel, String> {
+    // Lock mutex
+    let conn = conn.db.lock().await;
+
+    // Get travel from id
+    let travel = sqlx::query_as::<_, Travel>(r#"
+        SELECT ROWID, *
+        FROM travel
+        WHERE ROWID = $1
+    "#,
+    )
+        .bind(travel_id.to_string())
+        .fetch_one(&*conn)
+        .await
+        .map_err(|e| e.to_string());
+    travel
+}
+
 // Create one travel
 #[tauri::command]
 pub async fn create_travel(
