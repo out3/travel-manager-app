@@ -15,6 +15,7 @@ async fn main() {
         .manage(conn)
         .invoke_handler(tauri::generate_handler![
             app::travel::get_travels,
+            app::travel::get_travel,
             app::travel::create_travel,
             app::country::get_countries,
             app::currency::get_currencies,
