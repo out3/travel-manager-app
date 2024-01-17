@@ -8,11 +8,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [0.3.0] - ???
 ### Added
 - `Travel` now defines `Currency` from `isocurrency` crate
-- Function to fetch every currency
 - Tests for `Currency` methods `try_from` and `into`
+- Function to fetch every currency
+- Function to fetch one travel from its ID
+- `Travel` now defines a start and end date
+- Introduced TailwindCSS and DaisyUI to frontend
+- New UI
 
 ### Changed
 - `Country` parameters type changed from `&'static` to `String`
+- Frontend interfaces are now on separate files
 
 ## [0.2.0] - 2024-01-06
 ### Added
