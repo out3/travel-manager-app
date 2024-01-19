@@ -18,6 +18,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - `Country` parameters type changed from `&'static` to `String`
 - Frontend interfaces are now on separate files
+- Separation of frontend components into different files
 
 ## [0.2.0] - 2024-01-06
 ### Added
