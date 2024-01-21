@@ -18,8 +18,8 @@ function TravelAddEditForm() {
     // Variables used to create a new travel
     const [country, setCountry] = useState<string>();
     const [currency, setCurrency] = useState<string>();
-    const [startDate, setStartDate] = useState<string | null>(null);
-    const [endDate, setEndDate] = useState<string | null>(null);
+    const [startDate, setStartDate] = useState<Date | null>(null);
+    const [endDate, setEndDate] = useState<Date | null>(null);
 
     useEffect(() => {
         // Get every country and currency on load
@@ -48,15 +48,15 @@ function TravelAddEditForm() {
     }
 
     // Function to create a new travel
-
     function createTravel(): void {
+        console.log(country, currency, startDate?.toLocaleDateString() || "", endDate?.toLocaleDateString() || "");
         (invoke('create_travel', {
             country: country,
             currency: currency,
-            // startDate: startDate,
-            // endDate: endDate
+            startDate: startDate?.toLocaleDateString() || "",
+            endDate: endDate?.toLocaleDateString() || ""
         }) as Promise<Travel>)
-            .then((data) => console.log(data))
+            .then((data: Travel) => console.log(data))
             .catch((err: string) => console.error(err))
     }
 
@@ -82,7 +82,7 @@ function TravelAddEditForm() {
                             onChange={e => setCountry(e.target.value)}
                         >
                             {countries.map((country) => (
-                                <option key={country.code}>
+                                <option key={country.code} value={country.code}>
                                     {country.name}
                                 </option>
                             ))}
@@ -94,7 +94,7 @@ function TravelAddEditForm() {
                             onChange={e => setCurrency(e.target.value)}
                         >
                             {currencies.map((currency) => (
-                                <option key={currency.code}>
+                                <option key={currency.code} value={currency.code}>
                                     {currency.code} ({currency.symbol})
                                 </option>))}
                         </select>
@@ -103,14 +103,14 @@ function TravelAddEditForm() {
                         <input
                             type="date"
                             className="input input-bordered w-full max-w-xs"
-                            onChange={e => setStartDate(e.target.value)}
+                            onChange={e => setStartDate(new Date(e.target.value))}
                         />
 
                         {/* Date end picker */}
                         <input
                             type="date"
                             className="input input-bordered w-full max-w-xs"
-                            onChange={e => setEndDate(e.target.value)}
+                            onChange={e => setEndDate(new Date(e.target.value))}
                         />
 
                         {/* Submit button */}

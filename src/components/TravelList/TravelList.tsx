@@ -68,7 +68,7 @@ function TravelList({setCurrentTravelHandler, currentTravel}: TravelAddEditFormP
                         ><a>
                             {String(travel.rowid)} {travel.country.name} | {travel.currency.code} ({travel.currency.symbol})
                             <br/>
-                            {travel.start_date} - {travel.end_date}
+                            {travel.start_date?.toString()} - {travel.end_date?.toString()}
                         </a></li>
                     ))}
                 </ul>
