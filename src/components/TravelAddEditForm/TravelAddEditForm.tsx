@@ -7,7 +7,7 @@ import {Currency} from '../../interfaces/Currency.ts';
 import {Travel} from '../../interfaces/Travel.ts';
 
 // React hooks
-import {useEffect, useState} from "react";
+import {useEffect, useState, useRef} from "react";
 
 function TravelAddEditForm() {
     // List of countries available for dropdown
@@ -16,10 +16,10 @@ function TravelAddEditForm() {
     const [currencies, setCurrencies] = useState<Currency[]>([]);
 
     // Variables used to create a new travel
-    const [country, setCountry] = useState<string>();
-    const [currency, setCurrency] = useState<string>();
-    const [startDate, setStartDate] = useState<Date | null>(null);
-    const [endDate, setEndDate] = useState<Date | null>(null);
+    const countryRef = useRef<HTMLSelectElement>(null);
+    const currencyRef = useRef<HTMLSelectElement>(null);
+    const startDateRef = useRef<HTMLInputElement>(null);
+    const endDateRef = useRef<HTMLInputElement>(null);
 
     useEffect(() => {
         // Get every country and currency on load
@@ -32,7 +32,6 @@ function TravelAddEditForm() {
         (invoke('get_countries') as Promise<Country[]>)
             .then((data: Country[]) => {
                 setCountries(data);
-                setCountry(data[0].code)
             })
             .catch((err: string) => console.error(err));
     }
@@ -42,19 +41,17 @@ function TravelAddEditForm() {
         (invoke('get_currencies') as Promise<Currency[]>)
             .then((data: Currency[]) => {
                 setCurrencies(data);
-                setCurrency(data[0].code)
             })
             .catch((err: string) => console.error(err));
     }
 
     // Function to create a new travel
     function createTravel(): void {
-        console.log(country, currency, startDate?.toLocaleDateString() || "", endDate?.toLocaleDateString() || "");
         (invoke('create_travel', {
-            country: country,
-            currency: currency,
-            startDate: startDate?.toLocaleDateString() || "",
-            endDate: endDate?.toLocaleDateString() || ""
+            country: countryRef.current?.value,
+            currency: currencyRef.current?.value,
+            startDate: startDateRef.current?.value ? new Date(startDateRef.current?.value).toLocaleDateString() : "",
+            endDate: endDateRef.current?.value ? new Date(endDateRef.current?.value).toLocaleDateString() : ""
         }) as Promise<Travel>)
             .then((data: Travel) => console.log(data))
             .catch((err: string) => console.error(err))
@@ -79,7 +76,7 @@ function TravelAddEditForm() {
                         {/* Country dropdown */}
                         <select
                             className="select select-bordered w-full max-w-xs"
-                            onChange={e => setCountry(e.target.value)}
+                            ref={countryRef}
                         >
                             {countries.map((country) => (
                                 <option key={country.code} value={country.code}>
@@ -91,7 +88,7 @@ function TravelAddEditForm() {
                         {/* Currency dropdown */}
                         <select
                             className="select select-bordered w-full max-w-xs"
-                            onChange={e => setCurrency(e.target.value)}
+                            ref={currencyRef}
                         >
                             {currencies.map((currency) => (
                                 <option key={currency.code} value={currency.code}>
@@ -103,14 +100,14 @@ function TravelAddEditForm() {
                         <input
                             type="date"
                             className="input input-bordered w-full max-w-xs"
-                            onChange={e => setStartDate(new Date(e.target.value))}
+                            ref={startDateRef}
                         />
 
                         {/* Date end picker */}
                         <input
                             type="date"
                             className="input input-bordered w-full max-w-xs"
-                            onChange={e => setEndDate(new Date(e.target.value))}
+                            ref={endDateRef}
                         />
 
                         {/* Submit button */}

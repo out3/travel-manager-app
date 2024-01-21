@@ -7,7 +7,7 @@ import {invoke} from '@tauri-apps/api/tauri'
 import {Travel} from '../../interfaces/Travel.ts';
 
 // React hooks
-import {useEffect, useState} from 'react';
+import {useEffect, useRef, useState} from 'react';
 
 // Components
 import TravelList from "../TravelList/TravelList.tsx";
@@ -16,6 +16,8 @@ import TravelAddEditForm from "../TravelAddEditForm/TravelAddEditForm.tsx";
 function TravelManager() {
     // Travel displayed
     const [currentTravel, setCurrentTravel] = useState<Travel | undefined>();
+    // Modal ref
+    const modalRef = useRef<HTMLDialogElement>(null);
 
     useEffect(() => {
         // Test if travel is cached
@@ -35,13 +37,6 @@ function TravelManager() {
             .catch((err: string) => console.error(err))
     }
 
-    // Function to open TravelAddEditForm modal
-    function openTravelCreatorModal(): void {
-        let travelCreatorModal = document.getElementById("travelCreatorModal") as HTMLDialogElement;
-        travelCreatorModal.showModal();
-    }
-
-
     return (
         <>
             {/* Travel list*/}
@@ -56,7 +51,7 @@ function TravelManager() {
                     btn btn-lg ml-2
                     bg-primary
                     "
-                    onClick={() => openTravelCreatorModal()}
+                        onClick={() => modalRef.current?.showModal()}
                 >
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6">
                         <path fillRule="evenodd"
@@ -65,8 +60,8 @@ function TravelManager() {
                     </svg>
                 </button>
                 {/* TravelAddEditForm modal */}
-                <dialog id="travelCreatorModal" className="modal">
-                    <TravelAddEditForm />
+                <dialog ref={modalRef} className="modal">
+                    <TravelAddEditForm/>
                 </dialog>
             </header>
             {/*  Travel data  */}
