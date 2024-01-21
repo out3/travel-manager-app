@@ -73,8 +73,8 @@ function TravelManager() {
             <li>ID: {String(currentTravel?.rowid)}</li>
             <li>country: {currentTravel?.country.name}</li>
             <li>currency: {currentTravel?.currency.code}</li>
-            <li>date_start: {currentTravel?.start_date}</li>
-            <li>date_end: {currentTravel?.end_date}</li>
+            <li>date_start: {currentTravel?.start_date?.toString()}</li>
+            <li>date_end: {currentTravel?.end_date?.toString()}</li>
         </>
     )
 }

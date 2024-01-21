@@ -7,6 +7,7 @@ use crate::app::country::Country;
 use crate::app::currency::Currency;
 use crate::db;
 
+
 #[derive(Debug, Clone, FromRow, Serialize)]
 pub struct Travel {
     rowid: i64,
@@ -64,7 +65,9 @@ pub async fn get_travel(
 pub async fn create_travel(
     conn: tauri::State<'_, db::DbConnection>,
     country: String,
-    currency: String
+    currency: String,
+    start_date: String,
+    end_date: String
 ) -> Result<Travel, String> {
     // Lock mutex
     let conn = conn.db.lock().await;
@@ -77,6 +80,26 @@ pub async fn create_travel(
         .ok_or("Currency unknown".to_string())?
         .into();
 
+    // Handle dates
+    // Convert string dates to Option<NaiveDate>
+    let start_date: Option<NaiveDate> = NaiveDate::parse_from_str(&*dbg!(start_date), "%d/%m/%Y")
+        .ok();
+    let end_date: Option<NaiveDate> = NaiveDate::parse_from_str(&*dbg!(end_date), "%d/%m/%Y")
+        .ok();
+
+    // Start date can not be null if end date is defined
+    if let (None, Some(_)) = (start_date, end_date) {
+        return Err("Start date must be specified if end date is defined".to_string());
+    }
+
+    // End date must be after start date
+    if let (Some(start_date), Some(end_date)) = (start_date, end_date) {
+            if start_date > end_date {
+                return Err("End date must be after start date".to_string());
+            }
+    }
+
+
     // Perform query
     let travel_created = sqlx::query_as::<_, Travel>("
         INSERT INTO travel (country, currency, start_date, end_date)
@@ -85,8 +108,8 @@ pub async fn create_travel(
     ")
         .bind(country_wrapper)
         .bind(currency_wrapper)
-        .bind(NaiveDate::from_num_days_from_ce_opt(1))
-        .bind(NaiveDate::from_num_days_from_ce_opt(2))
+        .bind(start_date)
+        .bind(end_date)
         .fetch_one(&*conn)
         .await
         .map_err(|e| e.to_string());
