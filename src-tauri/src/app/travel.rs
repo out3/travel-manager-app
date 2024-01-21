@@ -82,9 +82,9 @@ pub async fn create_travel(
 
     // Handle dates
     // Convert string dates to Option<NaiveDate>
-    let start_date: Option<NaiveDate> = NaiveDate::parse_from_str(&*dbg!(start_date), "%d/%m/%Y")
+    let start_date: Option<NaiveDate> = NaiveDate::parse_from_str(&*start_date, "%d/%m/%Y")
         .ok();
-    let end_date: Option<NaiveDate> = NaiveDate::parse_from_str(&*dbg!(end_date), "%d/%m/%Y")
+    let end_date: Option<NaiveDate> = NaiveDate::parse_from_str(&*end_date, "%d/%m/%Y")
         .ok();
 
     // Start date can not be null if end date is defined
