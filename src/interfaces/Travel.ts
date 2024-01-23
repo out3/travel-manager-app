@@ -5,6 +5,6 @@ export interface Travel {
     rowid: number,
     country: Country,
     currency: Currency,
-    start_date: Date | null,
-    end_date: Date | null
+    start_date: Date | undefined,
+    end_date: Date | undefined
 }

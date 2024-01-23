@@ -12,8 +12,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Function to fetch every currency
 - Function to fetch one travel from its ID
 - `Travel` now defines a start and end date
-- Introduced TailwindCSS and DaisyUI to frontend
+- Introduced TailwindCSS and shadcn/ui to frontend
 - New UI
+- `TravelAddEditForm` component to add or edit a travel
+- Added frontend form validation for `TravelAddEditForm`
 
 ### Changed
 - `Country` parameters type changed from `&'static` to `String`
