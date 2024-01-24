@@ -4,21 +4,32 @@ import './TravelList.css'
 import {invoke} from '@tauri-apps/api/tauri'
 
 // Interfaces
-import {Travel} from '../../interfaces/Travel.ts';
+import {Travel} from '@/interfaces/Travel.ts';
 
 // React hooks
-import {useState, useEffect} from 'react';
+import {useEffect, useState} from 'react';
+
+// Components
+import {Button} from "@/components/ui/button"
+import {Command, CommandEmpty, CommandGroup, CommandInput, CommandItem,} from "@/components/ui/command"
+import {Popover, PopoverContent, PopoverTrigger,} from "@/components/ui/popover"
+import {CaretSortIcon, CheckIcon} from "@radix-ui/react-icons";
+import {cn} from '@/lib/utils';
 
 // Props interface
-type TravelAddEditFormProps = {
-    setCurrentTravelHandler: (travelId: number) => void
-    currentTravel: Travel | undefined
-}
+// type TravelAddEditFormProps = {
+//     setCurrentTravelHandler: (travelId: number) => void
+//     currentTravel: Travel | undefined
+// }
 
-function TravelList({setCurrentTravelHandler, currentTravel}: TravelAddEditFormProps) {
+// function TravelList({setCurrentTravelHandler, currentTravel}: TravelAddEditFormProps) {
+function TravelList() {
     // List of every travels
     const [travels, setTravels] = useState<Travel[]>([]);
-
+    const [currentTravel, setCurrentTravel] = useState<Travel | undefined>();
+    const [openTravelListDropdown, setOpenTravelListDropdown] = useState<Boolean>(false);
+    // variable used to avoid travel searching by its rowid
+    const [searchInput, setSearchInput] = useState<string>("");
     useEffect(() => {
         fetchTravels();
     }, []);
@@ -31,48 +42,73 @@ function TravelList({setCurrentTravelHandler, currentTravel}: TravelAddEditFormP
             .catch((err: string) => console.error(err));
     }
 
+    function setCurrentTravelHandler(travelId: number): void {
+        (invoke('get_travel', {travelId: travelId}) as Promise<Travel>)
+            .then((travel) => {
+                localStorage.setItem("current-travel", String(travelId))
+                setCurrentTravel(travel);
+            })
+            .catch((err: string) => console.error(err))
+    }
+
+    // @ts-ignore
     return (
         <>
-            <div className="dropdown mb-1 flex-1">
-                <div tabIndex={0} role="button" className="
-                        btn btn-lg shadow
-                        w-auto flex justify-between
-                        ">
-                    <div className="flex flex-col items-start">
-                        <p className="text-2xl">{currentTravel ? currentTravel.country.name : 0}</p>
-                        <p className="text-sm text-primary">{currentTravel &&
-                            (currentTravel.country.name + " - " +
-                                currentTravel.currency.code + " (" + currentTravel.currency.symbol + ")")
-                        }</p>
-                    </div>
-                    <div>
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5}
-                             stroke="currentColor" className="w-6 h-6">
-                            <path strokeLinecap="round" strokeLinejoin="round"
-                                  d="M7.5 21 3 16.5m0 0L7.5 12M3 16.5h13.5m0-13.5L21 7.5m0 0L16.5 12M21 7.5H7.5"/>
-                        </svg>
-                    </div>
-                </div>
-                {/* Dropdown containing the list of travels */}
-                <ul tabIndex={0}
-                    className="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-96 mt-1 ">
-                    {travels.map((travel: Travel) => (
-                        <li key={travel.rowid} className="flex flex-column hover:bg-primary hover:rounded-lg"
-                            onClick={(e): void => {
-                                // Change current travel
-                                setCurrentTravelHandler(travel.rowid);
-                                // Hide the list of travels after click
-                                let parent = e.currentTarget.parentNode as HTMLUListElement;
-                                parent.blur();
+            {/*@ts-ignore*/}
+            <Popover open={openTravelListDropdown} onOpenChange={setOpenTravelListDropdown}>
+                <PopoverTrigger asChild>
+                    {/*@ts-ignore*/}
+                    <Button
+                        variant="outline"
+                        role="combobox"
+                        aria-expanded={openTravelListDropdown}
+                        className="w-[300px] h-12 justify-between"
+                    >
+                        {currentTravel?.country.code ? currentTravel.country.name : "Select travel..."}
+                        <CaretSortIcon className="ml-2 h-4 w-4 shrink-0 opacity-50"/>
+                    </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-full p-0">
+                    <Command>
+                        <CommandInput
+                            placeholder="Search travel..."
+                            className="h-9"
+                            value={searchInput}
+                            onValueChange={(value) => {
+                                // Remove numbers from the input
+                                setSearchInput(value.replace(/[0-9]/g, ''));
                             }}
-                        ><a>
-                            {String(travel.rowid)} {travel.country.name} | {travel.currency.code} ({travel.currency.symbol})
-                            <br/>
-                            {travel.start_date?.toString()} - {travel.end_date?.toString()}
-                        </a></li>
-                    ))}
-                </ul>
-            </div>
+                        />
+                        <CommandEmpty>No travel found.</CommandEmpty>
+                        <CommandGroup>
+                            {travels.map((travel) => (
+                                <CommandItem
+                                    key={travel.rowid}
+                                    // Rowid is used so two travel on the same country doesn't react as one
+                                    value={travel.country.name + travel.rowid}
+                                    // Avoid searching by rowid by deleting numbers in the search input
+                                    onSelect={() => {
+                                        setCurrentTravelHandler(travel.rowid)
+                                        setOpenTravelListDropdown(false)
+                                    }}
+                                >
+                                    {travel.country.name}
+                                    <pre className="text-gray-500">
+                                        {travel.start_date ? " | " + travel.start_date.toString() : ""}
+                                        {travel.end_date ? " ~ " + travel.end_date.toString() : ""}
+                                    </pre>
+                                    <CheckIcon
+                                        className={cn(
+                                            "ml-auto h-4 w-4",
+                                            currentTravel?.rowid == travel.rowid ? "opacity-100" : "opacity-0"
+                                        )}
+                                    />
+                                </CommandItem>
+                            ))}
+                        </CommandGroup>
+                    </Command>
+                </PopoverContent>
+            </Popover>
         </>
     )
 }
