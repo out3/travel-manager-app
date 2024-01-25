@@ -1,5 +1,5 @@
 // Interfaces
-import {Travel} from '@/interfaces/Travel.ts';
+import {Travel} from '@/types.ts';
 
 // React hooks
 import {useState} from 'react';

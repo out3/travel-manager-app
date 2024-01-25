@@ -2,9 +2,7 @@
 import {invoke} from '@tauri-apps/api/tauri'
 
 // Interfaces
-import {Country} from '@/interfaces/Country.ts';
-import {Currency} from '@/interfaces/Currency.ts';
-import {Travel} from '@/interfaces/Travel.ts';
+import {Country, Currency, Travel} from '@/types.ts';
 
 // Hooks
 import {useEffect, useState} from "react";
@@ -197,7 +195,6 @@ function TravelAddEditForm({closeDialog}: TravelAddEditFormProps) {
                     </div>
                     {/* End date */}
                     <div className="grid gap-2 col-span-full md:col-span-1">
-
                         <FormField
                             control={form.control}
                             name="endDate"
