@@ -1,6 +1,6 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
-import TravelManager from '@/components/TravelManager/TravelManager.tsx'
+import TravelManager from '@/components/Travel/TravelManager.tsx'
 import './index.css'
 import {Toaster} from "@/components/ui/toaster.tsx";
 
