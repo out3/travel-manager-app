@@ -1,57 +1,30 @@
-import './TravelList.css'
-
-// When using the Tauri API npm package:
-import {invoke} from '@tauri-apps/api/tauri'
-
 // Interfaces
 import {Travel} from '@/interfaces/Travel.ts';
 
 // React hooks
-import {useEffect, useState} from 'react';
+import {useState} from 'react';
 
 // Components
-import {Button} from "@/components/ui/button"
-import {Command, CommandEmpty, CommandGroup, CommandInput, CommandItem,} from "@/components/ui/command"
-import {Popover, PopoverContent, PopoverTrigger,} from "@/components/ui/popover"
+import {Button} from "@/components/ui/button.tsx"
+import {Command, CommandEmpty, CommandGroup, CommandInput, CommandItem,} from "@/components/ui/command.tsx"
+import {Popover, PopoverContent, PopoverTrigger,} from "@/components/ui/popover.tsx"
 import {CaretSortIcon, CheckIcon} from "@radix-ui/react-icons";
-import {cn} from '@/lib/utils';
+import {cn} from '@/lib/utils.ts';
 
 // Props interface
-// type TravelAddEditFormProps = {
-//     setCurrentTravelHandler: (travelId: number) => void
-//     currentTravel: Travel | undefined
-// }
+type TravelAddEditFormProps = {
+    travelsList: Travel[]
+    currentTravel: Travel | undefined
+    setCurrentTravelHandler: (travelId: number) => void
+}
 
-// function TravelList({setCurrentTravelHandler, currentTravel}: TravelAddEditFormProps) {
-function TravelList() {
-    // List of every travels
-    const [travels, setTravels] = useState<Travel[]>([]);
-    const [currentTravel, setCurrentTravel] = useState<Travel | undefined>();
+// function TravelList() {
+function TravelList({travelsList, currentTravel, setCurrentTravelHandler}: TravelAddEditFormProps) {
+    // const [currentTravel, setCurrentTravel] = useState<Travel | undefined>();
     const [openTravelListDropdown, setOpenTravelListDropdown] = useState<Boolean>(false);
-    // variable used to avoid travel searching by its rowid
+    // Variable used to avoid travel searching by its rowid
     const [searchInput, setSearchInput] = useState<string>("");
-    useEffect(() => {
-        fetchTravels();
-    }, []);
 
-    function fetchTravels(): void {
-        (invoke('get_travels') as Promise<Travel[]>)
-            .then((data: Travel[]) => {
-                setTravels(data);
-            })
-            .catch((err: string) => console.error(err));
-    }
-
-    function setCurrentTravelHandler(travelId: number): void {
-        (invoke('get_travel', {travelId: travelId}) as Promise<Travel>)
-            .then((travel) => {
-                localStorage.setItem("current-travel", String(travelId))
-                setCurrentTravel(travel);
-            })
-            .catch((err: string) => console.error(err))
-    }
-
-    // @ts-ignore
     return (
         <>
             {/*@ts-ignore*/}
@@ -62,7 +35,7 @@ function TravelList() {
                         variant="outline"
                         role="combobox"
                         aria-expanded={openTravelListDropdown}
-                        className="w-[300px] h-12 justify-between"
+                        className="w-full h-12 justify-between"
                     >
                         {currentTravel?.country.code ? currentTravel.country.name : "Select travel..."}
                         <CaretSortIcon className="ml-2 h-4 w-4 shrink-0 opacity-50"/>
@@ -81,7 +54,7 @@ function TravelList() {
                         />
                         <CommandEmpty>No travel found.</CommandEmpty>
                         <CommandGroup>
-                            {travels.map((travel) => (
+                            {travelsList.map((travel) => (
                                 <CommandItem
                                     key={travel.rowid}
                                     // Rowid is used so two travel on the same country doesn't react as one
@@ -113,4 +86,4 @@ function TravelList() {
     )
 }
 
-export default TravelList;
+export default TravelList
