@@ -2,7 +2,7 @@
 import {invoke} from '@tauri-apps/api/tauri'
 
 // Interfaces
-import {Travel} from '@/interfaces/Travel.ts';
+import {Travel} from '@/types.ts';
 
 // React hooks
 import {useEffect, useState} from 'react';
