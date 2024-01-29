@@ -40,7 +40,6 @@ type TravelFormProps = {
 }
 
 function TravelAddEditForm({closeDialog, formMode, currentTravel}: TravelFormProps) {
-
     // Toast hook (corner notification)
     const {toast} = useToast();
 
@@ -54,13 +53,19 @@ function TravelAddEditForm({closeDialog, formMode, currentTravel}: TravelFormPro
         resolver: zodResolver(formSchema),
     });
 
+    // Boolean to trigger fetchCountries and fetchCurrencies on load
+    const [isLoaded, setIsLoaded] = useState<boolean>(false);
+
     useEffect(() => {
         // Get every country and currency on load
-        fetchCountries();
-        fetchCurrencies();
+        if (!isLoaded) {
+            fetchCountries();
+            fetchCurrencies();
+            setIsLoaded(true);
+        }
         // If formMode set to EDIT, set form values to current travel
         if (formMode === TravelFormMode.EDIT && currentTravel) {
-            form.setValue("country", currentTravel.country.code);
+            form.setValue("country", String(currentTravel.country.code));
             form.setValue("currency", currentTravel.currency.code);
             if (currentTravel?.start_date) {
                 form.setValue("startDate", new Date(currentTravel.start_date));
@@ -69,7 +74,7 @@ function TravelAddEditForm({closeDialog, formMode, currentTravel}: TravelFormPro
                 form.setValue("endDate", new Date(currentTravel.end_date));
             }
         }
-    }, []);
+    }, [currentTravel]);
 
     // Function to get a list of countries from rust backend
     function fetchCountries(): void {
@@ -158,7 +163,7 @@ function TravelAddEditForm({closeDialog, formMode, currentTravel}: TravelFormPro
                                 <FormLabel>Country</FormLabel>
                                 <Select
                                     onValueChange={field.onChange}
-                                    value={field.valueAsString}
+                                    value={field.value}
                                 >
                                     <FormControl>
                                         <SelectTrigger>
@@ -169,7 +174,6 @@ function TravelAddEditForm({closeDialog, formMode, currentTravel}: TravelFormPro
                                         {countries.map((country) => (<SelectItem
                                             key={country.code}
                                             value={country.code}
-                                            className="truncate"
                                         >
                                             <span className="font-semibold">{country.name}</span>
                                             <span className="text-gray-500 text-sm"> ({country.code})</span>
@@ -189,7 +193,7 @@ function TravelAddEditForm({closeDialog, formMode, currentTravel}: TravelFormPro
                                 <FormLabel>Local currency</FormLabel>
                                 <Select
                                     onValueChange={field.onChange}
-                                    value={field.valueAsString}
+                                    value={field.value}
                                 >
                                     <FormControl>
                                         <SelectTrigger>
@@ -293,9 +297,6 @@ function TravelAddEditForm({closeDialog, formMode, currentTravel}: TravelFormPro
                     {/* Submit button */}
                     <Button type="submit" className="w-full col-span-full">
                         Submit
-                    </Button>
-                    <Button className="w-full col-span-full" onClick={editTravel}>
-                        test
                     </Button>
                 </form>
             </Form>
