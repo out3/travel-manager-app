@@ -1,4 +1,4 @@
-// Interfaces
+// Types
 import {Travel} from '@/types.ts';
 
 // React hooks
