@@ -1,7 +1,7 @@
 // When using the Tauri API npm package:
 import {invoke} from '@tauri-apps/api/tauri'
 
-// Interfaces
+// Types
 import {Travel} from '@/types.ts';
 
 // React hooks
@@ -10,6 +10,7 @@ import {useEffect, useState} from 'react';
 // Components
 import TravelList from "./TravelList.tsx";
 import TravelAddButtonDialog from "@/components/Travel/TravelAddButtonDialog.tsx";
+import TravelEditButtonDialog from "@/components/Travel/TravelEditButtonDialog.tsx";
 
 
 function TravelManager() {
@@ -47,6 +48,18 @@ function TravelManager() {
             .catch((err: string) => console.error(err))
     }
 
+    function displayEditButton() {
+        if (currentTravel) {
+            return (
+                <div className="ml-4">
+                    <TravelEditButtonDialog
+                        currentTravel={currentTravel}
+                    />
+                </div>
+            )
+        }
+    }
+
     return (<>
         {/* Travel list*/}
         <header className="m-5 flex">
@@ -56,6 +69,8 @@ function TravelManager() {
                 currentTravel={currentTravel}
                 setCurrentTravelHandler={setCurrentTravelHandler}
             />
+            {/* Edit travel button + form */}
+            {displayEditButton()}
             {/* Add a new travel button + form */}
             <div className="ml-4">
                 <TravelAddButtonDialog/>
