@@ -115,3 +115,63 @@ pub async fn create_travel(
         .map_err(|e| e.to_string());
     travel_created
 }
+
+
+// Update one travel
+#[tauri::command]
+pub async fn update_travel(
+    conn: tauri::State<'_, db::DbConnection>,
+    travel_id: i64,
+    country: String,
+    currency: String,
+    start_date: String,
+    end_date: String
+) -> Result<Travel, String> {
+    // Lock mutex
+    let conn = conn.db.lock().await;
+
+    // Create country and currency object
+    let country_wrapper: Country = CountryCode::for_alpha3(&*country)
+        .map_err(|e| e.to_string())?
+        .into();
+    let currency_wrapper: Currency = iso_currency::Currency::from_code(&*currency)
+        .ok_or("Currency unknown".to_string())?
+        .into();
+
+    // Handle dates
+    // Convert string dates to Option<NaiveDate>
+    let start_date: Option<NaiveDate> = NaiveDate::parse_from_str(&*start_date, "%d/%m/%Y")
+        .ok();
+    let end_date: Option<NaiveDate> = NaiveDate::parse_from_str(&*end_date, "%d/%m/%Y")
+        .ok();
+
+    // Start date can not be null if end date is defined
+    if let (None, Some(_)) = (start_date, end_date) {
+        return Err("Start date must be specified if end date is defined".to_string());
+    }
+
+    // End date must be after start date
+    if let (Some(start_date), Some(end_date)) = (start_date, end_date) {
+        if start_date > end_date {
+            return Err("End date must be after start date".to_string());
+        }
+    }
+
+
+    // Perform query
+    let travel_updated = sqlx::query_as::<_, Travel>("
+        UPDATE travel
+        SET (country, currency, start_date, end_date) = ($2, $3, $4, $5)
+        WHERE ROWID = $1
+        RETURNING ROWID, *
+    ")
+        .bind(travel_id)
+        .bind(country_wrapper)
+        .bind(currency_wrapper)
+        .bind(start_date)
+        .bind(end_date)
+        .fetch_one(&*conn)
+        .await
+        .map_err(|e| e.to_string());
+    travel_updated
+}
