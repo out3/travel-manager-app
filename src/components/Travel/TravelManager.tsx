@@ -6,6 +6,7 @@ import {Travel} from '@/types.ts';
 
 // React hooks
 import {useEffect, useState} from 'react';
+import {useCustomToast} from "@/lib/toastHandlers.tsx";
 
 // Components
 import TravelList from "./TravelList.tsx";
@@ -14,6 +15,9 @@ import TravelEditButtonDialog from "@/components/Travel/TravelEditButtonDialog.t
 
 
 function TravelManager() {
+    // Toast hook (corner notification)
+    const {toastError} = useCustomToast();
+
     // List of every travels
     const [travels, setTravels] = useState<Travel[]>([]);
     // Travel displayed
@@ -36,7 +40,7 @@ function TravelManager() {
             .then((data: Travel[]) => {
                 setTravels(data);
             })
-            .catch((err: string) => console.error(err));
+            .catch((err: string) => toastError(err));
     }
 
     function setCurrentTravelHandler(travelId: number): void {
@@ -45,7 +49,7 @@ function TravelManager() {
                 localStorage.setItem("current-travel", String(travelId))
                 setCurrentTravel(travel);
             })
-            .catch((err: string) => console.error(err))
+            .catch((err: string) => toastError(err))
     }
 
     function displayEditButton() {
