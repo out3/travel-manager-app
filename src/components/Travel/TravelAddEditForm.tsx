@@ -7,6 +7,7 @@ import {TravelFormMode} from '@/enums.ts'
 
 // Hooks
 import {useEffect, useState} from "react";
+import {useCustomToast} from "@/lib/toastHandlers.tsx"
 
 // Form validation
 import {useForm} from "react-hook-form"
@@ -15,7 +16,6 @@ import {z} from 'zod';
 import {format} from "date-fns";
 
 // Component
-import {useToast} from "@/components/ui/use-toast.ts"
 import {Button} from "@/components/ui/button.tsx"
 import {Calendar} from "@/components/ui/calendar.tsx";
 import {CalendarIcon} from '@radix-ui/react-icons';
@@ -42,7 +42,7 @@ type TravelFormProps = {
 
 function TravelAddEditForm({closeDialog, formMode, currentTravel}: TravelFormProps) {
     // Toast hook (corner notification)
-    const {toast} = useToast();
+    const {toastError, toastMessage} = useCustomToast();
 
     // List of countries available for dropdown
     const [countries, setCountries] = useState<Country[]>([]);
@@ -83,7 +83,7 @@ function TravelAddEditForm({closeDialog, formMode, currentTravel}: TravelFormPro
             .then((data: Country[]) => {
                 setCountries(data);
             })
-            .catch((err: string) => console.error(err));
+            .catch((err: string) => toastError(err));
     }
 
     // Function to get a list of currencies from rust backend
@@ -92,7 +92,7 @@ function TravelAddEditForm({closeDialog, formMode, currentTravel}: TravelFormPro
             .then((data: Currency[]) => {
                 setCurrencies(data);
             })
-            .catch((err: string) => console.error(err));
+            .catch((err: string) => toastError(err));
     }
 
 
@@ -104,7 +104,14 @@ function TravelAddEditForm({closeDialog, formMode, currentTravel}: TravelFormPro
             endDate: travel.endDate ? travel.endDate.toLocaleDateString() : ""
         }) as Promise<Travel>)
             .then((data: Travel) => {
-                toastSuccess(data, "The following travel has been created:");
+                const msg = (
+                    <>
+                        {data.country.name} - {data.currency.code} ({data.currency.symbol})
+                        {data.start_date ? ("\n" + data.start_date.toLocaleString()) : null}
+                        {data.end_date ? (" to " + data.end_date.toLocaleString()) : null}
+                    </>
+                )
+                toastMessage(msg, "The following travel has been created:");
                 closeDialog();
             })
             .catch((err: string) => toastError(err, "Error while creating travel:"))
@@ -119,33 +126,17 @@ function TravelAddEditForm({closeDialog, formMode, currentTravel}: TravelFormPro
             endDate: travel.endDate ? travel.endDate.toLocaleDateString() : ""
         }) as Promise<Travel>)
             .then((data: Travel) => {
-                toastSuccess(data, "The following travel has been edited:");
+                const msg = (
+                    <>
+                        {data.country.name} - {data.currency.code} ({data.currency.symbol})
+                        {data.start_date ? ("\n" + data.start_date.toLocaleString()) : null}
+                        {data.end_date ? (" to " + data.end_date.toLocaleString()) : null}
+                    </>
+                )
+                toastMessage(msg, "The following travel has been edited:");
                 closeDialog();
             })
             .catch((err: string) => toastError(err, "Error while updating travel:"))
-    }
-
-    function toastSuccess(travel: Travel, title: string): void {
-        toast({
-            title: title,
-            description: (<pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
-                            <code className="text-gray-300">
-                                {travel.country.name} - {travel.currency.code} ({travel.currency.symbol})
-                                {travel.start_date ? ("\n" + travel.start_date.toLocaleString()) : null}
-                                {travel.end_date ? (" to " + travel.end_date.toLocaleString()) : null}
-                            </code>
-                        </pre>),
-        });
-    }
-
-    function toastError(err: string, title: string): void {
-        toast({
-            variant: "destructive",
-            title: title,
-            description: (<pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
-                            <code className="text-gray-300">{err}</code>
-                        </pre>),
-        })
     }
 
     function onSubmit(travel: z.infer<typeof formSchema>): void {
