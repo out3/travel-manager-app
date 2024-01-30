@@ -29,6 +29,7 @@ const formSchema = z.object({
     // Selects must be set
     country: z.string().length(3, {message: 'Country not selected'}),
     currency: z.string().length(3, {message: 'Currency not selected'}), // Dates must be in the right format, can also be optional
+    // Dates are optional
     startDate: z.date().optional(),
     endDate: z.date().optional(),
 })
@@ -67,14 +68,14 @@ function TravelAddEditForm({closeDialog, formMode, currentTravel}: TravelFormPro
         if (formMode === TravelFormMode.EDIT && currentTravel) {
             form.setValue("country", String(currentTravel.country.code));
             form.setValue("currency", currentTravel.currency.code);
-            if (currentTravel?.start_date) {
+            if (currentTravel.start_date) {
                 form.setValue("startDate", new Date(currentTravel.start_date));
             }
-            if (currentTravel?.end_date) {
+            if (currentTravel.end_date) {
                 form.setValue("endDate", new Date(currentTravel.end_date));
             }
         }
-    }, [currentTravel]);
+    }, [countries, currencies]);
 
     // Function to get a list of countries from rust backend
     function fetchCountries(): void {
@@ -103,22 +104,30 @@ function TravelAddEditForm({closeDialog, formMode, currentTravel}: TravelFormPro
             endDate: travel.endDate ? travel.endDate.toLocaleDateString() : ""
         }) as Promise<Travel>)
             .then((data: Travel) => {
-                toastSuccess(data);
+                toastSuccess(data, "The following travel has been created:");
                 closeDialog();
             })
-            .catch((err: string) => toastError(err))
+            .catch((err: string) => toastError(err, "Error while creating travel:"))
     }
 
-    function editTravel(): void {
-        console.log(form.getValues("country"))
-        console.log(form.getValues("currency"))
-        console.log(form.getValues("startDate"))
-        console.log(form.getValues("endDate"))
+    function editTravel(travel: z.infer<typeof formSchema>): void {
+        (invoke('update_travel', {
+            travelId: currentTravel?.rowid,
+            country: travel.country?.toString(),
+            currency: travel.currency?.toString(),
+            startDate: travel.startDate ? travel.startDate.toLocaleDateString() : "",
+            endDate: travel.endDate ? travel.endDate.toLocaleDateString() : ""
+        }) as Promise<Travel>)
+            .then((data: Travel) => {
+                toastSuccess(data, "The following travel has been edited:");
+                closeDialog();
+            })
+            .catch((err: string) => toastError(err, "Error while updating travel:"))
     }
 
-    function toastSuccess(travel: Travel): void {
+    function toastSuccess(travel: Travel, title: string): void {
         toast({
-            title: "The following travel has been created:",
+            title: title,
             description: (<pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
                             <code className="text-gray-300">
                                 {travel.country.name} - {travel.currency.code} ({travel.currency.symbol})
@@ -129,10 +138,10 @@ function TravelAddEditForm({closeDialog, formMode, currentTravel}: TravelFormPro
         });
     }
 
-    function toastError(err: string): void {
+    function toastError(err: string, title: string): void {
         toast({
             variant: "destructive",
-            title: "Error while creating travel:",
+            title: title,
             description: (<pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
                             <code className="text-gray-300">{err}</code>
                         </pre>),
@@ -146,7 +155,7 @@ function TravelAddEditForm({closeDialog, formMode, currentTravel}: TravelFormPro
         }
         // If formMode set to EDIT => Edit the current travel
         else if (formMode === TravelFormMode.EDIT) {
-            editTravel();
+            editTravel(travel);
         }
     }
 
@@ -230,8 +239,8 @@ function TravelAddEditForm({closeDialog, formMode, currentTravel}: TravelFormPro
                                             >
                                                 {
                                                     field.value
-                                                    ? (format(field.value, "PPP"))
-                                                    : (<span>Pick a date</span>)
+                                                        ? (format(field.value, "PPP"))
+                                                        : (<span>Pick a date</span>)
                                                 }
                                                 <CalendarIcon className="ml-auto h-4 w-4 opacity-50"/>
                                             </Button>
@@ -266,8 +275,8 @@ function TravelAddEditForm({closeDialog, formMode, currentTravel}: TravelFormPro
                                             >
                                                 {
                                                     field.value
-                                                    ? (format(field.value, "PPP"))
-                                                    : (<span>Pick a date</span>)
+                                                        ? (format(field.value, "PPP"))
+                                                        : (<span>Pick a date</span>)
                                                 }
                                                 <CalendarIcon className="ml-auto h-4 w-4 opacity-50"/>
                                             </Button>

@@ -17,7 +17,10 @@ async fn main() {
             app::travel::get_travels,
             app::travel::get_travel,
             app::travel::create_travel,
+            app::travel::update_travel,
+
             app::country::get_countries,
+
             app::currency::get_currencies,
         ])
         .run(tauri::generate_context!())
