@@ -7,26 +7,26 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.3.0] - TBD
 ### Added
-- `Travel` now defines `Currency` from `isocurrency` crate
+- New UI using TailwindCSS and shadcn/ui
+- Travels now defines a currency, a start and end date
+- User can now add or edit a travel
+
+
 - Added tests for `Currency` methods `try_from` and `into`
 - Added function `fetchCurrencies` to fetch every currency
-- `Travel` now defines a start and end date
 - Added function `fetchTravel` to retrieve a travel from its ID
 - Added function `updateTravel` to update a travel from its ID
-- New UI using TailwindCSS and shadcn/ui
-- User can now add or edit a travel through `TravelAddEditForm`
 - Added frontend components `TravelAddEditForm`, `TravelADDButtonDialog`, `TravelEditButtonDialog`
 - Added frontend form validation for `TravelAddEditForm` using `zodResolver`
 - Created a custom hook `useCustomToast` in `src/lib/useCustomToast.tsx` that uses the `toast` hook and provides `toastError` and `toastSuccess` functions.
-- Updated `TravelAddEditForm` and `TravelManager` to use `useCustomToast` hook
 
 ### Changed
 - `Country` parameters type changed from `&'static` to `String`
-- Frontend types are now organised on separate files
+- Frontend types are now defined on separate files
 - Frontend components (`TravelManager`, `TravelList`) are now in separate files
 
 ### Fixed
-- Fixed an issue in the database code where the database file would nto be created if the parent folder did not exist
+- Fixed an issue in the database code where the database file would not be created if the parent folder did not exist
 
 
 ## [0.2.0] - 2024-01-06
