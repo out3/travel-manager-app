@@ -12,6 +12,8 @@ import {useCustomToast} from "@/lib/toastHandlers.tsx";
 import TravelList from "./TravelList.tsx";
 import TravelAddButtonDialog from "@/components/Travel/TravelAddButtonDialog.tsx";
 import TravelEditButtonDialog from "@/components/Travel/TravelEditButtonDialog.tsx";
+import TravelInfo from "./TravelInfo.tsx";
+import {Skeleton} from "@/components/ui/skeleton"
 
 
 function TravelManager() {
@@ -64,6 +66,22 @@ function TravelManager() {
         }
     }
 
+    function displayTravelInfo() {
+        if (currentTravel) {
+            return (
+                <TravelInfo currentTravel={currentTravel}/>
+            )
+        } else {
+            return (
+                <div className="flex justify-between">
+                    <Skeleton className="h-56 w-56 rounded-3xl"/>
+                    <Skeleton className="h-56 w-56 rounded-3xl"/>
+                    <Skeleton className="h-56 w-56 rounded-3xl"/>
+                </div>
+            )
+        }
+    }
+
     return (<>
         {/* Travel list*/}
         <header className="m-5 flex">
@@ -81,11 +99,9 @@ function TravelManager() {
             </div>
         </header>
         {/*  Travel data  */}
-        <li>ID: {String(currentTravel?.rowid)}</li>
-        <li>country: {currentTravel?.country.name}</li>
-        <li>currency: {currentTravel?.currency.code}</li>
-        <li>date_start: {currentTravel?.start_date?.toString()}</li>
-        <li>date_end: {currentTravel?.end_date?.toString()}</li>
+        <main className="m-5">
+            {displayTravelInfo()}
+        </main>
     </>)
 }
 
