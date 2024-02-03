@@ -25,30 +25,50 @@ function TravelManager() {
     // Travel displayed
     const [currentTravel, setCurrentTravel] = useState<Travel | undefined>();
 
+    // At component mount => Fetch travels and currentTravel
     useEffect(() => {
-        // Get every travels
-        updateTravels();
-
-        // Test if currentTravel is cached
-        let cachedTravel = localStorage.getItem("current-travel");
-        // If yes, set currentTravel from its ID
-        if (cachedTravel) {
-            setCurrentTravelHandler(parseInt(cachedTravel))
-        }
-    }, [travels]);
-
-    function updateTravels(): void {
+        // Update the list of travels and the current travel
+        // Api call to retrieve travels
         (invoke('get_travels') as Promise<Travel[]>)
             .then((data: Travel[]) => {
+                // Set the list of travels
                 setTravels(data);
+
+                // If it's empty, delete the cached travel id and unset the currentTravel, return
+                if (data.length === 0) {
+                    localStorage.removeItem("current-travel");
+                    setCurrentTravel(undefined);
+                    return;
+                }
+
+                // If currentTravel is already set, return
+                if (currentTravel) {
+                    return;
+                }
+
+                // Get the cached travel id
+                let cachedTravelId = localStorage.getItem("current-travel");
+                let parsedCachedTravelId = cachedTravelId ? parseInt(cachedTravelId) : null;
+
+                // If cached travel is not set
+                // Or, it is set, but the actual cached id is not on the list of travels
+                if (!cachedTravelId ||
+                    (cachedTravelId && !(data.find((travel: Travel): Boolean => travel.rowid === parsedCachedTravelId)))
+                ) {
+                    // Set the first travel as the current travel
+                    localStorage.setItem("current-travel", String(data[0].rowid));
+                }
+
+                // Set current Travel
+                updateCurrentTravel(parseInt(localStorage.getItem("current-travel")!));
             })
             .catch((err: string) => toastError(err));
-    }
+    }, [currentTravel]);
 
-    function setCurrentTravelHandler(travelId: number): void {
+    function updateCurrentTravel(travelId: number): void {
         (invoke('get_travel', {travelId: travelId}) as Promise<Travel>)
             .then((travel) => {
-                localStorage.setItem("current-travel", String(travelId))
+                localStorage.setItem("current-travel", String(travel.rowid))
                 setCurrentTravel(travel);
             })
             .catch((err: string) => toastError(err))
@@ -57,11 +77,14 @@ function TravelManager() {
     function displayEditButton() {
         if (currentTravel) {
             return (
-                <div className="ml-4">
-                    <TravelEditButtonDialog
-                        currentTravel={currentTravel}
-                    />
-                </div>
+                <>
+                    <div className="ml-4">
+                        <TravelEditButtonDialog
+                            updateCurrentTravel={updateCurrentTravel}
+                            currentTravel={currentTravel}
+                        />
+                    </div>
+                </>
             )
         }
     }
@@ -89,13 +112,15 @@ function TravelManager() {
             <TravelList
                 travelsList={travels}
                 currentTravel={currentTravel}
-                setCurrentTravelHandler={setCurrentTravelHandler}
+                updateCurrentTravel={updateCurrentTravel}
             />
             {/* Edit travel button + form */}
             {displayEditButton()}
             {/* Add a new travel button + form */}
             <div className="ml-4">
-                <TravelAddButtonDialog/>
+                <TravelAddButtonDialog
+                    updateCurrentTravel={updateCurrentTravel}
+                />
             </div>
         </header>
         {/*  Travel data  */}

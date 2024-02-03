@@ -15,10 +15,11 @@ import TravelAddEditForm from "@/components/Travel/TravelAddEditForm.tsx";
 
 
 type TravelEditButtonDialogProps = {
-    currentTravel: Travel
+    currentTravel: Travel,
+    updateCurrentTravel: (travelId: number) => void
 }
 
-function TravelAddButtonDialog({currentTravel}: TravelEditButtonDialogProps) {
+function TravelAddButtonDialog(props: TravelEditButtonDialogProps) {
     // Dialog state
     const [dialogState, setDialogState] = useState(false);
 
@@ -33,14 +34,14 @@ function TravelAddButtonDialog({currentTravel}: TravelEditButtonDialogProps) {
                 <DialogHeader>
                     <DialogTitle>Edit travel</DialogTitle>
                     <DialogDescription>
-                        {currentTravel.country.name}
+                        {props.currentTravel.country.name}
                     </DialogDescription>
                 </DialogHeader>
                 {/* Form */}
                 <TravelAddEditForm
                     closeDialog={() => setDialogState(false)}
                     formMode={TravelFormMode.EDIT}
-                    currentTravel={currentTravel}
+                    {...props}
                 />
             </DialogContent>
         </Dialog>
