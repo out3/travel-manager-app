@@ -11,13 +11,13 @@ use sqlx::sqlite::{SqliteArgumentValue, SqliteTypeInfo, SqliteValueRef};
 
 #[derive(Serialize, Clone, Debug, PartialEq)]
 pub struct Country {
-    pub code: &'static str,
-    pub name: &'static str,
+    pub code: String,
+    pub name: String,
 }
 
 impl fmt::Display for Country {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "{}", self.name)
+        write!(f, "{}", &self.name)
     }
 }
 
@@ -27,8 +27,8 @@ impl TryFrom<&str> for Country {
         let i = CountryCode::for_alpha3(value)
             .context("CountryIsoWrapper::try_form : Error getting country")?;
         Ok(Country {
-            code: i.alpha3(),
-            name: i.name()
+            code: i.alpha3().to_string(),
+            name: i.name().to_string(),
         })
     }
 }
@@ -36,8 +36,8 @@ impl TryFrom<&str> for Country {
 impl Into<Country> for CountryCode {
     fn into(self) -> Country {
         Country {
-            code: self.alpha3(),
-            name: self.name()
+            code: self.alpha3().to_string(),
+            name: self.name().to_string(),
         }
     }
 }
@@ -51,7 +51,7 @@ impl Type<Sqlite> for Country {
 
 impl<'q> Encode<'q, Sqlite> for Country {
     fn encode_by_ref(&self, args: &mut Vec<SqliteArgumentValue<'q>>) -> IsNull {
-        args.push(SqliteArgumentValue::Text(Cow::Borrowed(self.code)));
+        args.push(SqliteArgumentValue::Text(Cow::Owned(self.clone().code)));
 
         IsNull::No
     }
@@ -62,8 +62,8 @@ impl<'r> Decode<'r, Sqlite> for Country {
         let country_code_str = <&str as Decode<Sqlite>>::decode(value)?;
         let country_code = CountryCode::for_alpha3(country_code_str)?;
         Ok(Country {
-            code: country_code.alpha3(),
-            name: country_code.name()
+            code: country_code.alpha3().to_string(),
+            name: country_code.name().to_string(),
         })
     }
 }

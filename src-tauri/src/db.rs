@@ -19,22 +19,21 @@ impl DbConnection {
 // Database creation
 pub async fn init() -> anyhow::Result<&'static str> {
     // Check if SQLite file exists
-    if Sqlite::database_exists(&get_db_path())
+    if !Sqlite::database_exists(&get_db_path())
         .await
         .context("db::init : Check db exist")?
     {
-        return Ok("Database already exists.");
-    }
-
     // If not, create the database
     Sqlite::create_database(&get_db_path())
         .await
         .context("db::init : Create database")?;
+    }
 
-    // If database created, setup the new database
+    // Apply migrations in both cases,
+    // in case the database struct has changed
     setup().await.context("db::init : Setup database")?;
 
-    Ok("Database created successfully.")
+    Ok("Database initialised successfully.")
 }
 
 // Database setup
@@ -58,5 +57,8 @@ async fn setup() -> anyhow::Result<()> {
 fn get_db_path() -> String {
     // In Windows : Use %appdata% folder to store database file
     let home_dir = dirs::config_dir().unwrap();
+    // Creates the directory if it does not exist
+    std::fs::create_dir_all(home_dir.to_str().unwrap().to_string() + "/travel-manager-app").unwrap();
+    // Returns the path to the database file
     home_dir.to_str().unwrap().to_string() + "/travel-manager-app/database.sqlite"
 }

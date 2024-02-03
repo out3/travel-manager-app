@@ -3,10 +3,9 @@ mod tests {
     use isocountry::CountryCode;
 
     use crate::app::country::Country;
-    use crate::app::utils;
+    use crate::app::currency::Currency;
 
-
-    // CountryIsoWrapper tests
+    // Country tests
     #[test]
     fn country_try_from() {
         // Try from : success
@@ -26,8 +25,33 @@ mod tests {
         // Into : success
         let country_into: Country = CountryCode::FRA.into();
         assert_eq!(country_into, Country {
-            code: "FRA",
-            name: "France"
+            code: String::from("FRA"),
+            name: String::from("France"),
+        })
+    }
+
+    // Currency tests
+    #[test]
+    fn currency_try_form() {
+        // Try from : success
+        // Equality : success
+        assert_eq!(Currency::try_from("EUR").expect("").code, iso_currency::Currency::EUR.code());
+        assert_eq!(Currency::try_from("KRW").expect("").code, iso_currency::Currency::KRW.code());
+        // try_form : success
+        // Equality : failed
+        assert_ne!(Currency::try_from("EUR").expect("").code, iso_currency::Currency::KRW.code());
+        assert_ne!(Currency::try_from("KRW").expect("").code, iso_currency::Currency::EUR.code());
+        // Try_form : failed
+        assert!(Currency::try_from("AAA").is_err());
+    }
+
+    #[test]
+    fn currency_into() {
+        // Into : success
+        let currency_into: Currency = iso_currency::Currency::EUR.into();
+        assert_eq!(currency_into, Currency {
+            code: iso_currency::Currency::EUR.code().parse().unwrap(),
+            symbol: iso_currency::Currency::EUR.symbol().symbol.parse().unwrap(),
         })
     }
 }
