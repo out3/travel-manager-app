@@ -57,5 +57,8 @@ async fn setup() -> anyhow::Result<()> {
 fn get_db_path() -> String {
     // In Windows : Use %appdata% folder to store database file
     let home_dir = dirs::config_dir().unwrap();
+    // Creates the directory if it does not exist
+    std::fs::create_dir_all(home_dir.to_str().unwrap().to_string() + "/travel-manager-app").unwrap();
+    // Returns the path to the database file
     home_dir.to_str().unwrap().to_string() + "/travel-manager-app/database.sqlite"
 }
