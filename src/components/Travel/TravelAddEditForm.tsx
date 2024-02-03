@@ -35,12 +35,13 @@ const formSchema = z.object({
 })
 
 type TravelFormProps = {
+    updateCurrentTravel: (travelId: number) => void
     closeDialog: () => void
     formMode: TravelFormMode
     currentTravel?: Travel
 }
 
-function TravelAddEditForm({closeDialog, formMode, currentTravel}: TravelFormProps) {
+function TravelAddEditForm({updateCurrentTravel, closeDialog, formMode, currentTravel}: TravelFormProps) {
     // Toast hook (corner notification)
     const {toastError, toastMessage} = useCustomToast();
 
@@ -58,6 +59,7 @@ function TravelAddEditForm({closeDialog, formMode, currentTravel}: TravelFormPro
     const [isLoaded, setIsLoaded] = useState<boolean>(false);
 
     useEffect(() => {
+        console.log("TravelAddEditForm: useEffect");
         // Get every country and currency on load
         if (!isLoaded) {
             fetchCountries();
@@ -104,6 +106,7 @@ function TravelAddEditForm({closeDialog, formMode, currentTravel}: TravelFormPro
             endDate: travel.endDate ? travel.endDate.toLocaleDateString() : ""
         }) as Promise<Travel>)
             .then((data: Travel) => {
+                // Display a success notification
                 const msg = (
                     <>
                         {data.country.name} - {data.currency.code} ({data.currency.symbol})
@@ -112,7 +115,10 @@ function TravelAddEditForm({closeDialog, formMode, currentTravel}: TravelFormPro
                     </>
                 )
                 toastMessage(msg, "The following travel has been created:");
+                // Close modal
                 closeDialog();
+                // Execute callback to re-render travels
+                updateCurrentTravel(data.rowid);
             })
             .catch((err: string) => toastError(err, "Error while creating travel:"))
     }
@@ -126,6 +132,8 @@ function TravelAddEditForm({closeDialog, formMode, currentTravel}: TravelFormPro
             endDate: travel.endDate ? travel.endDate.toLocaleDateString() : ""
         }) as Promise<Travel>)
             .then((data: Travel) => {
+                // Execute callback to re-render travels
+                updateCurrentTravel(data.rowid);
                 const msg = (
                     <>
                         {data.country.name} - {data.currency.code} ({data.currency.symbol})

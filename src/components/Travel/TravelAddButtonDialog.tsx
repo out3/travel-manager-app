@@ -12,8 +12,11 @@ import {
 } from "@/components/ui/dialog"
 import TravelAddEditForm from "@/components/Travel/TravelAddEditForm.tsx";
 
+type TravelAddButtonDialogProps = {
+    updateCurrentTravel: (newTravelId: number) => void;
+}
 
-function TravelAddButtonDialog() {
+function TravelAddButtonDialog(props: TravelAddButtonDialogProps) {
     // Dialog state
     const [dialogState, setDialogState] = useState(false);
 
@@ -35,6 +38,7 @@ function TravelAddButtonDialog() {
                 <TravelAddEditForm
                     closeDialog={() => setDialogState(false)}
                     formMode={TravelFormMode.ADD}
+                    {...props}
                 />
             </DialogContent>
         </Dialog>
