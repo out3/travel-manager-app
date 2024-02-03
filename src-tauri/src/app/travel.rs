@@ -56,7 +56,7 @@ pub async fn get_travel(
         .bind(travel_id.to_string())
         .fetch_one(&*conn)
         .await
-        .map_err(|e| e.to_string());
+        .map_err(|_| "Travel not found".to_string());
     travel
 }
 
