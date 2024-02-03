@@ -25,6 +25,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Frontend types are now organised on separate files
 - Frontend components (`TravelManager`, `TravelList`) are now in separate files
 
+### Fixed
+- Fixed an issue in the database code where the database file would nto be created if the parent folder did not exist
+
 
 ## [0.2.0] - 2024-01-06
 ### Added
@@ -42,6 +45,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - Application now functions correctly when built
 
+
 ## [0.1.0] - 2023-12-22
 
 ### Added
@@ -51,6 +55,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - Updated `TravelManager` to support creating a new travel
 - Database tables are now created through SQLx Migrations
+
 
 ## [0.1.0] - 2023-12-21
 
