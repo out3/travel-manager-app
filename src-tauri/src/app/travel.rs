@@ -11,6 +11,7 @@ use crate::db;
 #[derive(Debug, Clone, FromRow, Serialize)]
 pub struct Travel {
     rowid: i64,
+    created_at: NaiveDate,
     country: Country,
     currency: Currency,
     start_date: Option<NaiveDate>,
@@ -102,10 +103,11 @@ pub async fn create_travel(
 
     // Perform query
     let travel_created = sqlx::query_as::<_, Travel>("
-        INSERT INTO travel (country, currency, start_date, end_date)
-        VALUES ($1, $2, $3, $4)
+        INSERT INTO travel (created_at, country, currency, start_date, end_date)
+        VALUES ($1, $2, $3, $4, $5)
         RETURNING ROWID, *
     ")
+        .bind(chrono::Local::now().naive_local()) // Today's date
         .bind(country_wrapper)
         .bind(currency_wrapper)
         .bind(start_date)

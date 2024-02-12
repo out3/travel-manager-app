@@ -10,6 +10,7 @@ export type Currency = {
 
 export type Travel = {
     rowid: number;
+    created_at: Date;
     country: Country;
     currency: Currency;
     start_date: Date | undefined;

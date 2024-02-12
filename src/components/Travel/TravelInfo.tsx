@@ -29,6 +29,7 @@ function TravelInfo({currentTravel}: TravelInfoProps) {
                 return <Progress value={percentage}/>;
             // If the current travel has a start date but has not started
             case (currentTravel.start_date && todayDate < currentTravel.start_date):
+                percentage = Math.round((todayDate.getTime() - currentTravel.created_at.getTime()) / (currentTravel.start_date.getTime() - currentTravel.created_at.getTime()) * 100);
                 return <Progress value={percentage} indicatorClassName="bg-blue-400"/>;
             // If the current travel is in progress but has no end date
             case (currentTravel.start_date && todayDate > currentTravel.start_date && !currentTravel.end_date):

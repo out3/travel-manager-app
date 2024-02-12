@@ -69,6 +69,7 @@ function TravelManager() {
         (invoke('get_travel', {travelId: travelId}) as Promise<Travel>)
             .then((travel) => {
                 // Fix date format
+                travel.created_at = new Date(travel.created_at);
                 travel.start_date = travel.start_date ? new Date(travel.start_date) : undefined;
                 travel.end_date = travel.end_date ? new Date(travel.end_date) : undefined;
                 localStorage.setItem("current-travel", String(travel.rowid))
