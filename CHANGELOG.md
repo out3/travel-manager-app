@@ -5,10 +5,13 @@ This file documents all significant changes to this project.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [0.4.0] -
- 
+## [0.4.0] - 
+### Changed
+- Modified `TravelInfo` to follow application's UI
+
 ### Fixed
 - Fixed an issue where the frontend was receiving dates as strings instead of `Date` objects
+
 ## [0.3.0] - 2024-02-03
 ### Added
 - New UI using TailwindCSS and shadcn/ui
