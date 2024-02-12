@@ -47,13 +47,13 @@ function TravelManager() {
                 }
 
                 // Get the cached travel id
-                let cachedTravelId = localStorage.getItem("current-travel");
-                let parsedCachedTravelId = cachedTravelId ? parseInt(cachedTravelId) : null;
+                const cachedTravelId = localStorage.getItem("current-travel");
+                const parsedCachedTravelId = cachedTravelId ? parseInt(cachedTravelId) : null;
 
                 // If cached travel is not set
                 // Or, it is set, but the actual cached id is not on the list of travels
                 if (!cachedTravelId ||
-                    (cachedTravelId && !(data.find((travel: Travel): Boolean => travel.rowid === parsedCachedTravelId)))
+                    (cachedTravelId && !(data.find((travel: Travel): boolean => travel.rowid === parsedCachedTravelId)))
                 ) {
                     // Set the first travel as the current travel
                     localStorage.setItem("current-travel", String(data[0].rowid));
@@ -68,6 +68,9 @@ function TravelManager() {
     function updateCurrentTravel(travelId: number): void {
         (invoke('get_travel', {travelId: travelId}) as Promise<Travel>)
             .then((travel) => {
+                // Fix date format
+                travel.start_date = travel.start_date ? new Date(travel.start_date) : undefined;
+                travel.end_date = travel.end_date ? new Date(travel.end_date) : undefined;
                 localStorage.setItem("current-travel", String(travel.rowid))
                 setCurrentTravel(travel);
             })
