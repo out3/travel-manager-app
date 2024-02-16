@@ -30,7 +30,7 @@ pub async fn get_travels(
     // Perform query
     let all_travels = sqlx::query_as::<_, Travel>(r#"
         SELECT ROWID, *
-        FROM travel
+        FROM "travel"
     "#,
     )
         .fetch_all(&*conn)
@@ -51,7 +51,7 @@ pub async fn get_travel(
     // Get travel from id
     let travel = sqlx::query_as::<_, Travel>(r#"
         SELECT ROWID, *
-        FROM travel
+        FROM "travel"
         WHERE ROWID = $1
     "#,
     )
@@ -103,11 +103,11 @@ pub async fn create_travel(
 
 
     // Perform query
-    let travel_created = sqlx::query_as::<_, Travel>("
-        INSERT INTO travel (created_at, country, currency, start_date, end_date)
+    let travel_created = sqlx::query_as::<_, Travel>(r#"
+        INSERT INTO "travel" (created_at, country, currency, start_date, end_date)
         VALUES ($1, $2, $3, $4, $5)
         RETURNING ROWID, *
-    ")
+    "#)
         .bind(chrono::Local::now().naive_local()) // Today's date
         .bind(country_wrapper)
         .bind(currency_wrapper)
@@ -162,12 +162,13 @@ pub async fn update_travel(
 
 
     // Perform query
-    let travel_updated = sqlx::query_as::<_, Travel>("
-        UPDATE travel
-        SET (country, currency, start_date, end_date) = ($2, $3, $4, $5)
+    let travel_updated = sqlx::query_as::<_, Travel>(r#"
+        UPDATE "travel"
+        SET ("country", "currency", "start_date", "end_date")
+            = ($2, $3, $4, $5)
         WHERE ROWID = $1
         RETURNING ROWID, *
-    ")
+    "#)
         .bind(travel_id)
         .bind(country_wrapper)
         .bind(currency_wrapper)
