@@ -2,7 +2,7 @@
 import {invoke} from '@tauri-apps/api/tauri'
 
 // Types
-import {Travel} from '@/types.ts';
+import {Transaction, Travel} from '@/types.ts';
 
 // React hooks
 import {useEffect, useState} from 'react';
@@ -24,6 +24,7 @@ function TravelManager() {
     const [travels, setTravels] = useState<Travel[]>([]);
     // Travel displayed
     const [currentTravel, setCurrentTravel] = useState<Travel | undefined>();
+    const [transactionsCurrentTravel, setTransactionsCurrentTravel] = useState<Transaction[]>([]);
 
     // At component mount => Fetch travels and currentTravel
     useEffect(() => {
@@ -74,6 +75,14 @@ function TravelManager() {
                 travel.end_date = travel.end_date ? new Date(travel.end_date) : undefined;
                 localStorage.setItem("current-travel", String(travel.rowid))
                 setCurrentTravel(travel);
+
+                // Update transactions
+                (invoke('get_transactions_for_travel', {travelId: travelId}) as Promise<Transaction[]>)
+                    .then((transactions: Transaction[]) => {
+                        console.log(transactions)
+                        setTransactionsCurrentTravel(transactions);
+                    })
+                    .catch((err: string) => toastError(err))
             })
             .catch((err: string) => toastError(err))
     }
@@ -130,6 +139,17 @@ function TravelManager() {
         {/*  Travel data  */}
         <main className="m-5">
             {displayTravelInfo()}
+            <ul>
+                {transactionsCurrentTravel.map((transaction: Transaction) => (
+                        <li key={transaction.rowid}>
+                            <div>
+                                <p>{transaction.description}</p>
+                                <p>{transaction.amount} {transaction.currency.symbol}</p>
+                                <p>{transaction.transaction_date.toLocaleString()}</p>
+                            </div>
+                        </li>
+                    ))}
+            </ul>
         </main>
     </>)
 }

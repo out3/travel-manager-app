@@ -7,10 +7,11 @@ use crate::app::country::Country;
 use crate::app::currency::Currency;
 use crate::db;
 
+pub type TravelId = i64;
 
 #[derive(Debug, Clone, FromRow, Serialize)]
 pub struct Travel {
-    rowid: i64,
+    rowid: TravelId,
     created_at: NaiveDate,
     country: Country,
     currency: Currency,
@@ -42,7 +43,7 @@ pub async fn get_travels(
 #[tauri::command]
 pub async fn get_travel(
     conn: tauri::State<'_, db::DbConnection>,
-    travel_id: isize
+    travel_id: TravelId
 ) -> Result<Travel, String> {
     // Lock mutex
     let conn = conn.db.lock().await;

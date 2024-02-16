@@ -22,6 +22,8 @@ async fn main() {
             app::country::get_countries,
 
             app::currency::get_currencies,
+
+            app::transaction::get_transactions_for_travel
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
