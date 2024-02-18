@@ -2,29 +2,33 @@
 import {invoke} from '@tauri-apps/api/tauri'
 
 // Types
-import {Transaction, Travel} from '@/types.ts';
+import {Travel} from '@/types.ts';
 
 // React hooks
 import {useEffect, useState} from 'react';
 import {useCustomToast} from "@/lib/toastHandlers.tsx";
+import { useNavigate } from 'react-router-dom';
+
+// React router
+import {Outlet} from "react-router-dom";
 
 // Components
-import TravelList from "./TravelList.tsx";
+import TravelList from "../components/Travel/TravelList.tsx";
 import TravelAddButtonDialog from "@/components/Travel/TravelAddButtonDialog.tsx";
 import TravelEditButtonDialog from "@/components/Travel/TravelEditButtonDialog.tsx";
-import TravelInfo from "./TravelInfo.tsx";
-import {Skeleton} from "@/components/ui/skeleton"
+import Navbar from "@/components/Navbar.tsx";
 
-
-function TravelManager() {
+function Root() {
     // Toast hook (corner notification)
     const {toastError} = useCustomToast();
+
+    // React router redirection
+    const navigate = useNavigate();
 
     // List of every travels
     const [travels, setTravels] = useState<Travel[]>([]);
     // Travel displayed
     const [currentTravel, setCurrentTravel] = useState<Travel | undefined>();
-    const [transactionsCurrentTravel, setTransactionsCurrentTravel] = useState<Transaction[]>([]);
 
     // At component mount => Fetch travels and currentTravel
     useEffect(() => {
@@ -73,16 +77,12 @@ function TravelManager() {
                 travel.created_at = new Date(travel.created_at);
                 travel.start_date = travel.start_date ? new Date(travel.start_date) : undefined;
                 travel.end_date = travel.end_date ? new Date(travel.end_date) : undefined;
+                // Store current travel's id in local storage
                 localStorage.setItem("current-travel", String(travel.rowid))
+                // Set the current travel
                 setCurrentTravel(travel);
-
-                // Update transactions
-                (invoke('get_transactions_for_travel', {travelId: travelId}) as Promise<Transaction[]>)
-                    .then((transactions: Transaction[]) => {
-                        console.log(transactions)
-                        setTransactionsCurrentTravel(transactions);
-                    })
-                    .catch((err: string) => toastError(err))
+                // Redirect to the dashboard
+                navigate(travel.rowid + "/dashboard", {replace: true});
             })
             .catch((err: string) => toastError(err))
     }
@@ -90,68 +90,57 @@ function TravelManager() {
     function displayEditButton() {
         if (currentTravel) {
             return (
-                <>
-                    <div className="ml-4">
-                        <TravelEditButtonDialog
-                            updateCurrentTravel={updateCurrentTravel}
-                            currentTravel={currentTravel}
-                        />
-                    </div>
-                </>
-            )
-        }
-    }
-
-    function displayTravelInfo() {
-        if (currentTravel) {
-            return (
-                <TravelInfo currentTravel={currentTravel}/>
-            )
-        } else {
-            return (
-                <div className="flex justify-between">
-                    <Skeleton className="h-56 w-56 rounded-3xl"/>
-                    <Skeleton className="h-56 w-56 rounded-3xl"/>
-                    <Skeleton className="h-56 w-56 rounded-3xl"/>
+                <div className="ml-4">
+                    <TravelEditButtonDialog
+                        updateCurrentTravel={updateCurrentTravel}
+                        currentTravel={currentTravel}
+                    />
                 </div>
             )
         }
     }
 
-    return (<>
-        {/* Travel list*/}
-        <header className="m-5 flex">
-            {/* Travel list dropdown */}
-            <TravelList
-                travelsList={travels}
-                currentTravel={currentTravel}
-                updateCurrentTravel={updateCurrentTravel}
-            />
-            {/* Edit travel button + form */}
-            {displayEditButton()}
-            {/* Add a new travel button + form */}
-            <div className="ml-4">
-                <TravelAddButtonDialog
-                    updateCurrentTravel={updateCurrentTravel}
-                />
+    function displayNavbar() {
+        if (currentTravel) {
+            return (
+                <>
+                    <nav className="m-5 flex justify-center">
+                        <Navbar/>
+                    </nav>
+                </>
+            )
+        }
+    }
+
+    return (
+        <>
+            <div className="flex flex-col justify-center h-screen">
+                {/* Travel list*/}
+                <header className="m-5 flex">
+                    {/* Travel list dropdown */}
+                    <TravelList
+                        travelsList={travels}
+                        currentTravel={currentTravel}
+                        updateCurrentTravel={updateCurrentTravel}
+                    />
+                    {/* Edit travel button + form */}
+                    {displayEditButton()}
+                    {/* Add a new travel button + form */}
+                    <div className="ml-4">
+                        <TravelAddButtonDialog
+                            updateCurrentTravel={updateCurrentTravel}
+                        />
+                    </div>
+                </header>
+                {/* Router : Content */}
+                <main className="flex-grow mx-5">
+                    <Outlet />
+                </main>
+                {/* Navigation bar */}
+                {displayNavbar()}
             </div>
-        </header>
-        {/*  Travel data  */}
-        <main className="m-5">
-            {displayTravelInfo()}
-            <ul>
-                {transactionsCurrentTravel.map((transaction: Transaction) => (
-                        <li key={transaction.rowid}>
-                            <div>
-                                <p>{transaction.description}</p>
-                                <p>{transaction.amount} {transaction.currency.symbol}</p>
-                                <p>{transaction.transaction_date.toLocaleString()}</p>
-                            </div>
-                        </li>
-                    ))}
-            </ul>
-        </main>
-    </>)
+        </>
+    )
 }
 
-export default TravelManager
+export default Root

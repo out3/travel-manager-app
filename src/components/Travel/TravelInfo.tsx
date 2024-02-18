@@ -15,7 +15,6 @@ type TravelInfoProps = {
 }
 
 function TravelInfo({currentTravel}: TravelInfoProps) {
-
     function displayProgressBar(): JSX.Element {
         // Today's date
         const todayDate = new Date();
