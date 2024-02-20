@@ -14,8 +14,8 @@ import Transactions from "@/routes/transactions.tsx";
 const router = createBrowserRouter(
     createRoutesFromElements(
         <Route path="/" element={<Root/>} errorElement={<ErrorPage/>}>
-            <Route path=":travelId/dashboard" element={<Dashboard/>}/>
-            <Route path=":travelId/transactions" element={<Transactions />}/>
+            <Route path="/dashboard" element={<Dashboard/>}/>
+            <Route path="/transactions" element={<Transactions />}/>
         </Route>
     )
 )

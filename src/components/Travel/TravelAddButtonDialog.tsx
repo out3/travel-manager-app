@@ -1,5 +1,6 @@
 // Enums
 import {TravelFormMode} from "@/enums.ts";
+import {Travel} from "@/types.ts";
 
 // React hooks
 import {useState} from "react";
@@ -13,7 +14,7 @@ import {
 import TravelAddEditForm from "@/components/Travel/TravelAddEditForm.tsx";
 
 type TravelAddButtonDialogProps = {
-    updateCurrentTravel: (newTravelId: number) => void;
+    updateCurrentTravel: (travel: Travel) => void;
 }
 
 function TravelAddButtonDialog(props: TravelAddButtonDialogProps) {

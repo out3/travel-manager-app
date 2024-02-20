@@ -16,7 +16,7 @@ import TravelAddEditForm from "@/components/Travel/TravelAddEditForm.tsx";
 
 type TravelEditButtonDialogProps = {
     currentTravel: Travel,
-    updateCurrentTravel: (travelId: number) => void
+    updateCurrentTravel: (travel: Travel) => void
 }
 
 function TravelAddButtonDialog(props: TravelEditButtonDialogProps) {

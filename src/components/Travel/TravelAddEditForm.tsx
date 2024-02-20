@@ -35,7 +35,7 @@ const formSchema = z.object({
 })
 
 type TravelFormProps = {
-    updateCurrentTravel: (travelId: number) => void
+    updateCurrentTravel: (travel: Travel) => void
     closeDialog: () => void
     formMode: TravelFormMode
     currentTravel?: Travel
@@ -118,7 +118,7 @@ function TravelAddEditForm({updateCurrentTravel, closeDialog, formMode, currentT
                 // Close modal
                 closeDialog();
                 // Execute callback to re-render travels
-                updateCurrentTravel(data.rowid);
+                updateCurrentTravel(data);
             })
             .catch((err: string) => toastError(err, "Error while creating travel:"))
     }
@@ -133,7 +133,7 @@ function TravelAddEditForm({updateCurrentTravel, closeDialog, formMode, currentT
         }) as Promise<Travel>)
             .then((data: Travel) => {
                 // Execute callback to re-render travels
-                updateCurrentTravel(data.rowid);
+                updateCurrentTravel(data);
                 const msg = (
                     <>
                         {data.country.name} - {data.currency.code} ({data.currency.symbol})

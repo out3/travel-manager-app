@@ -1,143 +1,74 @@
-// When using the Tauri API npm package:
-import {invoke} from '@tauri-apps/api/tauri'
-
 // Types
-import {Travel} from '@/types.ts';
-
-// React hooks
-import {useEffect, useState} from 'react';
-import {useCustomToast} from "@/lib/toastHandlers.tsx";
-import { useNavigate } from 'react-router-dom';
+import {Travel} from "@/types.ts";
 
 // React router
-import {Outlet} from "react-router-dom";
+import {Link, Outlet, useNavigate} from "react-router-dom";
 
 // Components
-import TravelList from "../components/Travel/TravelList.tsx";
-import TravelAddButtonDialog from "@/components/Travel/TravelAddButtonDialog.tsx";
-import TravelEditButtonDialog from "@/components/Travel/TravelEditButtonDialog.tsx";
+import TravelManager from "@/components/Travel/TravelManager.tsx";
 import Navbar from "@/components/Navbar.tsx";
+import {useState} from "react";
+
+
+export type RootContextType = {
+    currentTravel: Travel | undefined,
+};
 
 function Root() {
-    // Toast hook (corner notification)
-    const {toastError} = useCustomToast();
-
     // React router redirection
     const navigate = useNavigate();
 
-    // List of every travels
-    const [travels, setTravels] = useState<Travel[]>([]);
-    // Travel displayed
+    // Current travel ID
     const [currentTravel, setCurrentTravel] = useState<Travel | undefined>();
 
-    // At component mount => Fetch travels and currentTravel
-    useEffect(() => {
-        // Update the list of travels and the current travel
-        // Api call to retrieve travels
-        (invoke('get_travels') as Promise<Travel[]>)
-            .then((data: Travel[]) => {
-                // Set the list of travels
-                setTravels(data);
+    // Function to update current travel and local storage
+    function updateCurrentTravel(travel?: Travel) {
+        if (!travel) {
+            // Clear current-travel
+            localStorage.removeItem("current-travel");
+            // Set the current travel as undefined
+            setCurrentTravel(undefined);
 
-                // If it's empty, delete the cached travel id and unset the currentTravel, return
-                if (data.length === 0) {
-                    localStorage.removeItem("current-travel");
-                    setCurrentTravel(undefined);
-                    return;
-                }
+            // Redirect to the root page
+            navigate("/", {replace: true});
+        } else {
+            // Fix date format
+            travel.created_at = new Date(travel.created_at);
+            travel.start_date = travel.start_date ? new Date(travel.start_date) : undefined;
+            travel.end_date = travel.end_date ? new Date(travel.end_date) : undefined;
 
-                // If currentTravel is already set, return
-                if (currentTravel) {
-                    return;
-                }
+            // Store current travel's id in local storage
+            localStorage.setItem("current-travel", String(travel.rowid))
+            // Fetch the travel from its ID
+            setCurrentTravel(travel);
 
-                // Get the cached travel id
-                const cachedTravelId = localStorage.getItem("current-travel");
-                const parsedCachedTravelId = cachedTravelId ? parseInt(cachedTravelId) : null;
-
-                // If cached travel is not set
-                // Or, it is set, but the actual cached id is not on the list of travels
-                if (!cachedTravelId ||
-                    (cachedTravelId && !(data.find((travel: Travel): boolean => travel.rowid === parsedCachedTravelId)))
-                ) {
-                    // Set the first travel as the current travel
-                    localStorage.setItem("current-travel", String(data[0].rowid));
-                }
-
-                // Set current Travel
-                updateCurrentTravel(parseInt(localStorage.getItem("current-travel")!));
-            })
-            .catch((err: string) => toastError(err));
-    }, [currentTravel]);
-
-    function updateCurrentTravel(travelId: number): void {
-        (invoke('get_travel', {travelId: travelId}) as Promise<Travel>)
-            .then((travel) => {
-                // Fix date format
-                travel.created_at = new Date(travel.created_at);
-                travel.start_date = travel.start_date ? new Date(travel.start_date) : undefined;
-                travel.end_date = travel.end_date ? new Date(travel.end_date) : undefined;
-                // Store current travel's id in local storage
-                localStorage.setItem("current-travel", String(travel.rowid))
-                // Set the current travel
-                setCurrentTravel(travel);
-                // Redirect to the dashboard
-                navigate(travel.rowid + "/dashboard", {replace: true});
-            })
-            .catch((err: string) => toastError(err))
-    }
-
-    function displayEditButton() {
-        if (currentTravel) {
-            return (
-                <div className="ml-4">
-                    <TravelEditButtonDialog
-                        updateCurrentTravel={updateCurrentTravel}
-                        currentTravel={currentTravel}
-                    />
-                </div>
-            )
+            // Redirect to the dashboard
+            navigate("/dashboard", {replace: true});
         }
     }
 
     function displayNavbar() {
-        if (currentTravel) {
-            return (
-                <>
-                    <nav className="m-5 flex justify-center">
-                        <Navbar/>
-                    </nav>
-                </>
-            )
+        if (location.pathname !== "/") {
+            return <Navbar />
         }
     }
 
     return (
         <>
             <div className="flex flex-col justify-center h-screen">
-                {/* Travel list*/}
+                {/* Travel Manager : List/edit/add*/}
                 <header className="m-5 flex">
-                    {/* Travel list dropdown */}
-                    <TravelList
-                        travelsList={travels}
-                        currentTravel={currentTravel}
-                        updateCurrentTravel={updateCurrentTravel}
-                    />
-                    {/* Edit travel button + form */}
-                    {displayEditButton()}
-                    {/* Add a new travel button + form */}
-                    <div className="ml-4">
-                        <TravelAddButtonDialog
-                            updateCurrentTravel={updateCurrentTravel}
-                        />
-                    </div>
+                    <TravelManager currentTravel={currentTravel} updateCurrentTravel={updateCurrentTravel}/>
                 </header>
                 {/* Router : Content */}
                 <main className="flex-grow mx-5">
-                    <Outlet />
+                    <Outlet context={{ currentTravel }} />
                 </main>
                 {/* Navigation bar */}
-                {displayNavbar()}
+                <nav className="m-5 flex justify-center">
+                    {displayNavbar()}
+                </nav>
+                <Link to={"/"}>Home</Link>
             </div>
         </>
     )

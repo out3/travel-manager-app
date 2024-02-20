@@ -15,13 +15,13 @@ import {cn} from '@/lib/utils.ts';
 type TravelAddEditFormProps = {
     travelsList: Travel[]
     currentTravel: Travel | undefined
-    updateCurrentTravel: (travelId: number) => void
+    updateCurrentTravel: (travel: Travel) => void
 }
 
 // function TravelList() {
 function TravelList({travelsList, currentTravel, updateCurrentTravel}: TravelAddEditFormProps) {
     // const [currentTravel, setCurrentTravel] = useState<Travel | undefined>();
-    const [openTravelListDropdown, setOpenTravelListDropdown] = useState<Boolean>(false);
+    const [openTravelListDropdown, setOpenTravelListDropdown] = useState<boolean>(false);
     // Variable used to avoid travel searching by its rowid
     const [searchInput, setSearchInput] = useState<string>("");
 
@@ -61,7 +61,7 @@ function TravelList({travelsList, currentTravel, updateCurrentTravel}: TravelAdd
                                     value={travel.country.name + travel.rowid}
                                     // Avoid searching by rowid by deleting numbers in the search input
                                     onSelect={() => {
-                                        updateCurrentTravel(travel.rowid)
+                                        updateCurrentTravel(travel)
                                         setOpenTravelListDropdown(false)
                                     }}
                                 >

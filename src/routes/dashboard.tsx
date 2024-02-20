@@ -1,21 +1,32 @@
-import TravelInfo from "@/components/Travel/TravelInfo.tsx";
+// Types
 import {Travel} from "@/types.ts";
 
-// Props interface
-type DashboardProps = {
-    currentTravel?: Travel
-}
+// Hooks
+import {useOutletContext} from "react-router-dom";
 
-function Dashboard({currentTravel}: DashboardProps) {
-    if (!currentTravel) {
-        return <div>Loading...</div>
-    } else {
-        return (
-            <>
-                <TravelInfo currentTravel={currentTravel}/>
-            </>
-        );
+// Components
+import TravelInfo from "@/components/Travel/TravelInfo.tsx";
+import TravelInfoSkeleton from "@/components/Travel/TravelInfoSkeleton.tsx";
+import {RootContextType} from "@/routes/root.tsx";
+
+
+function Dashboard() {
+    // Retrieve currentTravel and its update function
+    const {currentTravel} = useOutletContext<RootContextType>();
+
+    function displayTravelInfo(travel: Travel | undefined) {
+        if (travel) {
+            return <TravelInfo currentTravel={travel}/>;
+        } else {
+            return <TravelInfoSkeleton />
+        }
     }
+
+    return (
+        <>
+            {displayTravelInfo(currentTravel)}
+        </>
+    );
 }
 
 export default Dashboard

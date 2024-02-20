@@ -1,18 +1,25 @@
 import TransactionList from "@/components/Transaction/TransactionList.tsx";
-import {useParams} from "react-router-dom";
+import {useOutletContext} from "react-router-dom";
+import {RootContextType} from "@/routes/root.tsx";
+import {Travel} from "@/types.ts";
 
 function Transactions() {
-    const {travelId} = useParams();
+    // Retrieve currentTravel and its update function
+    const {currentTravel} = useOutletContext<RootContextType>();
 
-    if (!travelId) {
-        return <div>Loading...</div>
-    } else {
-        return (
-            <>
-                <TransactionList travelId={parseInt(travelId)}/>
-            </>
-        );
+    function displayTransactions(travel: Travel | undefined) {
+        if (travel) {
+            return <TransactionList currentTravelId={travel.rowid}/>
+        } else {
+            return <div>Loading...</div>
+        }
     }
+
+    return (
+        <>
+            {displayTransactions(currentTravel)}
+        </>
+    )
 }
 
 export default Transactions

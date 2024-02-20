@@ -10,10 +10,10 @@ import {useCustomToast} from "@/lib/toastHandlers.tsx";
 
 // Props interface
 type TransactionListProps = {
-    travelId: number
+    currentTravelId: number
 }
 
-function TransactionList({travelId}: TransactionListProps) {
+function TransactionList({currentTravelId}: TransactionListProps) {
     // Toast hook (corner notification)
     const {toastError} = useCustomToast();
 
@@ -22,13 +22,13 @@ function TransactionList({travelId}: TransactionListProps) {
 
     // Update transactions
     useEffect(() => {
-        (invoke('get_transactions_for_travel', {travelId: travelId}) as Promise<Transaction[]>)
+        (invoke('get_transactions_for_travel', {travelId: currentTravelId}) as Promise<Transaction[]>)
             .then((transactions: Transaction[]) => {
                 console.log(transactions)
                 setTransactionsCurrentTravel(transactions);
             })
             .catch((err: string) => toastError(err))
-    })
+    }, [currentTravelId])
 
     return (
         <>
