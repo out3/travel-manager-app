@@ -1,13 +1,12 @@
+// React
+import {useOutletContext} from "react-router-dom";
 // Types
 import {Travel} from "@/types.ts";
-
-// Hooks
-import {useOutletContext} from "react-router-dom";
-
+// Routes
+import {RootContextType} from "@/routes/root.tsx";
 // Components
 import TravelInfo from "@/components/Travel/TravelInfo.tsx";
 import TravelInfoSkeleton from "@/components/Travel/TravelInfoSkeleton.tsx";
-import {RootContextType} from "@/routes/root.tsx";
 
 
 function Dashboard() {
@@ -18,7 +17,7 @@ function Dashboard() {
         if (travel) {
             return <TravelInfo currentTravel={travel}/>;
         } else {
-            return <TravelInfoSkeleton />
+            return <TravelInfoSkeleton/>
         }
     }
 

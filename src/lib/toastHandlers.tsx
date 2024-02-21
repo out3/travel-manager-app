@@ -1,5 +1,6 @@
-// src/lib/useCustomToast.tsx
+// UI
 import {useToast} from "@/components/ui/use-toast.ts"
+
 
 export function useCustomToast() {
     const {toast} = useToast();

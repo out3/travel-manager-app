@@ -1,15 +1,15 @@
+// React
+import {useState} from 'react';
 // Types
 import {Travel} from '@/types.ts';
-
-// React hooks
-import {useState} from 'react';
-
-// Components
+// UI
 import {Button} from "@/components/ui/button.tsx"
 import {Command, CommandEmpty, CommandGroup, CommandInput, CommandItem,} from "@/components/ui/command.tsx"
 import {Popover, PopoverContent, PopoverTrigger,} from "@/components/ui/popover.tsx"
+// Icons
 import {CaretSortIcon, CheckIcon} from "@radix-ui/react-icons";
 import {cn} from '@/lib/utils.ts';
+
 
 // Props interface
 type TravelAddEditFormProps = {
@@ -18,7 +18,7 @@ type TravelAddEditFormProps = {
     updateCurrentTravel: (travel: Travel) => void
 }
 
-// function TravelList() {
+
 function TravelList({travelsList, currentTravel, updateCurrentTravel}: TravelAddEditFormProps) {
     // const [currentTravel, setCurrentTravel] = useState<Travel | undefined>();
     const [openTravelListDropdown, setOpenTravelListDropdown] = useState<boolean>(false);
@@ -27,10 +27,8 @@ function TravelList({travelsList, currentTravel, updateCurrentTravel}: TravelAdd
 
     return (
         <>
-            {/*@ts-ignore*/}
             <Popover open={openTravelListDropdown} onOpenChange={setOpenTravelListDropdown}>
                 <PopoverTrigger asChild>
-                    {/*@ts-ignore*/}
                     <Button
                         variant="outline"
                         role="combobox"

@@ -1,18 +1,18 @@
+// React
+import {useState} from "react";
+import {Outlet, useNavigate} from "react-router-dom";
 // Types
 import {Travel} from "@/types.ts";
-
-// React router
-import {Outlet, useNavigate} from "react-router-dom";
-
 // Components
-import TravelManager from "@/components/Travel/TravelManager.tsx";
 import Navbar from "@/components/Navbar.tsx";
-import {useState} from "react";
+import TravelManager from "@/components/Travel/TravelManager.tsx";
 
 
+// Context interface (to send data to <Outlet>)
 export type RootContextType = {
     currentTravel: Travel | undefined,
 };
+
 
 function Root() {
     // React router redirection
@@ -44,7 +44,6 @@ function Root() {
         navigate("/dashboard", {replace: true});
     }
 
-
     return (
         <>
             <div className="flex flex-col justify-center h-screen">
@@ -54,11 +53,11 @@ function Root() {
                 </header>
                 {/* Router : Content */}
                 <main className="flex-grow mx-5">
-                    <Outlet context={{ currentTravel }} />
+                    <Outlet context={{currentTravel}}/>
                 </main>
                 {/* Navigation bar */}
                 <nav className="m-5 flex justify-center">
-                    <Navbar />
+                    <Navbar/>
                 </nav>
             </div>
         </>

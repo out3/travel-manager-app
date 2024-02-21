@@ -1,15 +1,22 @@
-import TravelList from "@/components/Travel/TravelList.tsx";
-import TravelAddButtonDialog from "@/components/Travel/TravelAddButtonDialog.tsx";
-import {useEffect, useState} from "react";
-import {Travel} from "@/types.ts";
+// Tauri API
 import {invoke} from "@tauri-apps/api/tauri";
+// React
+import {useEffect, useState} from "react";
 import {useCustomToast} from "@/lib/toastHandlers.tsx";
+// Types
+import {Travel} from "@/types.ts";
+// Components
+import TravelAddButtonDialog from "@/components/Travel/TravelAddButtonDialog.tsx";
 import TravelEditButtonDialog from "@/components/Travel/TravelEditButtonDialog.tsx";
+import TravelList from "@/components/Travel/TravelList.tsx";
 
+
+// Props interface
 type TravelManagerProps = {
-    currentTravel : Travel | undefined,
-    updateCurrentTravel : (travel?: Travel) => void
+    currentTravel: Travel | undefined,
+    updateCurrentTravel: (travel?: Travel) => void
 }
+
 
 function TravelManager({currentTravel, updateCurrentTravel}: TravelManagerProps) {
     // Toast hook (corner notification)

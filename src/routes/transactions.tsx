@@ -1,7 +1,12 @@
-import TransactionList from "@/components/Transaction/TransactionList.tsx";
+// React
 import {useOutletContext} from "react-router-dom";
-import {RootContextType} from "@/routes/root.tsx";
+// Types
 import {Travel} from "@/types.ts";
+// Routes
+import {RootContextType} from "@/routes/root.tsx";
+// Components
+import TransactionList from "@/components/Transaction/TransactionList.tsx";
+
 
 function Transactions() {
     // Retrieve currentTravel and its update function

@@ -1,21 +1,28 @@
-// Enums
-import {TravelFormMode} from "@/enums.ts";
-import {Travel} from "@/types.ts";
-
-// React hooks
+// React
 import {useState} from "react";
-
+// Types, Enums
+import {Travel} from "@/types.ts";
+import {TravelFormMode} from "@/enums.ts";
 // Components
-import {Button} from "@/components/ui/button"
-import {PlusIcon} from "@radix-ui/react-icons";
-import {
-    Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger
-} from "@/components/ui/dialog"
 import TravelAddEditForm from "@/components/Travel/TravelAddEditForm.tsx";
+// UI
+import {Button} from "@/components/ui/button"
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogHeader,
+    DialogTitle,
+    DialogTrigger
+} from "@/components/ui/dialog"
+// Icons
+import {PlusIcon} from "@radix-ui/react-icons";
+
 
 type TravelAddButtonDialogProps = {
     updateCurrentTravel: (travel: Travel) => void;
 }
+
 
 function TravelAddButtonDialog(props: TravelAddButtonDialogProps) {
     // Dialog state

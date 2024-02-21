@@ -1,11 +1,10 @@
-// Components
+// UI
 import {Card, CardContent, CardDescription, CardHeader, CardTitle} from "@/components/ui/card";
 import {Progress} from "@/components/ui/progress";
 import {Separator} from "@/components/ui/separator.tsx";
-
+import {Skeleton} from "@/components/ui/skeleton.tsx";
 // Icons
 import {PaperPlaneIcon} from "@radix-ui/react-icons";
-import {Skeleton} from "@/components/ui/skeleton.tsx";
 
 
 function TravelInfoSkeleton() {

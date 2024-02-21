@@ -1,27 +1,24 @@
-// When using the Tauri API npm package:
+// Tauri API
 import {invoke} from '@tauri-apps/api/tauri'
-
+// React
+import {useEffect, useState} from "react";
+import {useCustomToast} from "@/lib/toastHandlers.tsx"
 // Types, Enums
 import {Country, Currency, Travel} from '@/types.ts';
 import {TravelFormMode} from '@/enums.ts'
-
-// Hooks
-import {useEffect, useState} from "react";
-import {useCustomToast} from "@/lib/toastHandlers.tsx"
-
 // Form validation
 import {useForm} from "react-hook-form"
 import {zodResolver} from "@hookform/resolvers/zod"
 import {z} from 'zod';
 import {format} from "date-fns";
-
-// Component
+// UI
 import {Button} from "@/components/ui/button.tsx"
 import {Calendar} from "@/components/ui/calendar.tsx";
-import {CalendarIcon} from '@radix-ui/react-icons';
 import {Form, FormControl, FormField, FormItem, FormLabel, FormMessage} from "@/components/ui/form.tsx"
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select.tsx"
 import {Popover, PopoverContent, PopoverTrigger} from "@/components/ui/popover.tsx";
+// Icons
+import {CalendarIcon} from '@radix-ui/react-icons';
 
 
 // Form schema to specify validation rules
@@ -34,6 +31,8 @@ const formSchema = z.object({
     endDate: z.date().optional(),
 })
 
+
+// Props interface
 type TravelFormProps = {
     updateCurrentTravel: (travel: Travel) => void
     closeDialog: () => void

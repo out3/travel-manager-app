@@ -1,18 +1,18 @@
 // Types
 import {Travel} from '@/types.ts';
-
-// Components
+// UI
 import {Card, CardContent, CardDescription, CardHeader, CardTitle} from "@/components/ui/card";
 import {Progress} from "@/components/ui/progress";
 import {Separator} from "@/components/ui/separator.tsx";
-
 // Icons
 import {PaperPlaneIcon} from "@radix-ui/react-icons";
+
 
 // Props interface
 type TravelInfoProps = {
     currentTravel: Travel
 }
+
 
 function TravelInfo({currentTravel}: TravelInfoProps) {
     function displayProgressBar(): JSX.Element {

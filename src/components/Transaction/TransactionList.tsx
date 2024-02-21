@@ -1,17 +1,17 @@
 // Tauri API
 import {invoke} from "@tauri-apps/api/tauri";
-
+// React
+import {useEffect, useState} from 'react';
+import {useCustomToast} from "@/lib/toastHandlers.tsx";
 // Types
 import {Transaction} from '@/types.ts';
 
-// React hooks
-import {useEffect, useState} from 'react';
-import {useCustomToast} from "@/lib/toastHandlers.tsx";
 
 // Props interface
 type TransactionListProps = {
     currentTravelId: number
 }
+
 
 function TransactionList({currentTravelId}: TransactionListProps) {
     // Toast hook (corner notification)
