@@ -1,39 +1,28 @@
-import {Button} from "@/components/ui/button.tsx";
-import {Link} from "react-router-dom";
+import {NavLink} from "react-router-dom";
 
 function Navbar() {
     const routes = [
-        {path: "/dashboard/", label: "Dashboard"},
-        {path: "/transactions/", label: "Transactions"}
+        {path: "/dashboard", label: "Dashboard"},
+        {path: "/transactions", label: "Transactions"}
     ];
+
 
     return (
         <>
             <div className="bg-gray-100 rounded-lg shadow px-1 py-1 flex space-x-2">
                 {routes.map((route) => (
-                    <Link to={route.path} key={route.label}>
-                        <Button
-                            className="text-gray-600 font-semibold rounded hover:bg-gray-100"
-                            variant="ghost">
-                            {route.label}
-                        </Button>
-                    </Link>
+                    <NavLink end to={route.path} key={route.label} className={({ isActive}) =>
+                        [
+                            "h-9 px-5 py-2",
+                            "inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors",
+                            "hover:bg-accent hover:text-accent-foreground",
+                            isActive ? "bg-primary text-primary-foreground" : ""
+                        ].join(" ")}
+                    >
+                        {route.label}
+                    </NavLink>
                 ))}
             </div>
-            {/*<Link to={travelId + "/dashboard"}>*/}
-            {/*    <Button*/}
-            {/*        className="bg-primary text-white px-5 font-semibold shadow rounded hover:shadow-none hover:bg-primary-foreground"*/}
-            {/*        variant="ghost">*/}
-            {/*        Dashboard*/}
-            {/*    </Button>*/}
-            {/*</Link>*/}
-            {/*<Link to={travelId + "/transactions"}>*/}
-            {/*    <Button*/}
-            {/*        className="text-gray-600 font-semibold rounded hover:bg-gray-100"*/}
-            {/*        variant="ghost">*/}
-            {/*        Transactions*/}
-            {/*    </Button>*/}
-            {/*</Link>*/}
         </>
     )
 }

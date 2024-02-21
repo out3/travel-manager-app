@@ -28,9 +28,6 @@ function Root() {
             localStorage.removeItem("current-travel");
             // Set the current travel as undefined
             setCurrentTravel(undefined);
-
-            // Redirect to the root page
-            navigate("/", {replace: true});
         } else {
             // Fix date format
             travel.created_at = new Date(travel.created_at);
@@ -42,16 +39,11 @@ function Root() {
             // Fetch the travel from its ID
             setCurrentTravel(travel);
 
-            // Redirect to the dashboard
-            navigate("/dashboard", {replace: true});
         }
+        // Redirect to the dashboard
+        navigate("/dashboard", {replace: true});
     }
 
-    function displayNavbar() {
-        if (location.pathname !== "/") {
-            return <Navbar />
-        }
-    }
 
     return (
         <>
@@ -66,7 +58,7 @@ function Root() {
                 </main>
                 {/* Navigation bar */}
                 <nav className="m-5 flex justify-center">
-                    {displayNavbar()}
+                    <Navbar />
                 </nav>
             </div>
         </>
