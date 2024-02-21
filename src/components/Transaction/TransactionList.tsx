@@ -24,7 +24,6 @@ function TransactionList({currentTravelId}: TransactionListProps) {
     useEffect(() => {
         (invoke('get_transactions_for_travel', {travelId: currentTravelId}) as Promise<Transaction[]>)
             .then((transactions: Transaction[]) => {
-                console.log(transactions)
                 setTransactionsCurrentTravel(transactions);
             })
             .catch((err: string) => toastError(err))

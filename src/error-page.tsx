@@ -1,4 +1,4 @@
-import {Link, useNavigate} from 'react-router-dom';
+import {useNavigate} from 'react-router-dom';
 import {Button} from "@/components/ui/button.tsx";
 
 
@@ -53,7 +53,6 @@ function ErrorPage() {
             >
                 Go back
             </Button>
-            <Link to={"/"}>Home</Link>
         </div>
 
 )

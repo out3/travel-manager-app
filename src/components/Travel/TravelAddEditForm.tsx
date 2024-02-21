@@ -59,7 +59,6 @@ function TravelAddEditForm({updateCurrentTravel, closeDialog, formMode, currentT
     const [isLoaded, setIsLoaded] = useState<boolean>(false);
 
     useEffect(() => {
-        console.log("TravelAddEditForm: useEffect");
         // Get every country and currency on load
         if (!isLoaded) {
             fetchCountries();

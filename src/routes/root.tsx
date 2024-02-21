@@ -2,7 +2,7 @@
 import {Travel} from "@/types.ts";
 
 // React router
-import {Link, Outlet, useNavigate} from "react-router-dom";
+import {Outlet, useNavigate} from "react-router-dom";
 
 // Components
 import TravelManager from "@/components/Travel/TravelManager.tsx";
@@ -68,7 +68,6 @@ function Root() {
                 <nav className="m-5 flex justify-center">
                     {displayNavbar()}
                 </nav>
-                <Link to={"/"}>Home</Link>
             </div>
         </>
     )
