@@ -24,4 +24,5 @@ export type Transaction = {
     amount: number;
     currency: Currency;
     transaction_date: Date;
+     notes: string;
 }

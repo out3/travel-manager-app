@@ -16,7 +16,7 @@ function Navbar() {
                         [
                             "h-9 px-5 py-2",
                             "inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors",
-                            "hover:bg-accent hover:text-accent-foreground",
+                            "hover:bg-neutral-200 hover:text-accent-foreground",
                             isActive ? "bg-primary text-primary-foreground" : ""
                         ].join(" ")}
                     >

@@ -6,6 +6,7 @@ import {Travel} from "@/types.ts";
 import {RootContextType} from "@/routes/root.tsx";
 // Components
 import TransactionList from "@/components/Transaction/TransactionList.tsx";
+import TransactionListSkeleton from "@/components/Transaction/TransactionListSkeleton.tsx";
 
 
 function Transactions() {
@@ -16,7 +17,7 @@ function Transactions() {
         if (travel) {
             return <TransactionList currentTravelId={travel.rowid}/>
         } else {
-            return <div>Loading...</div>
+            return <TransactionListSkeleton />
         }
     }
 
