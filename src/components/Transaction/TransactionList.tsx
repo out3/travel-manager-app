@@ -6,15 +6,7 @@ import {useCustomToast} from "@/lib/toastHandlers.tsx";
 // Types
 import {Transaction} from '@/types.ts';
 // UI
-import {
-    Table,
-    TableBody,
-    TableCell,
-    TableFooter,
-    TableHead,
-    TableHeader,
-    TableRow,
-} from "@/components/ui/table"
+import {Table, TableBody, TableCell, TableFooter, TableHead, TableHeader, TableRow,} from "@/components/ui/table"
 import {Card} from "@/components/ui/card.tsx";
 
 // Props interface
@@ -40,8 +32,31 @@ function TransactionList({currentTravelId}: TransactionListProps) {
     }, [currentTravelId])
 
     // Function to sum transactions amounts
-    function sumAmounts() {
-        return transactionsCurrentTravel.reduce((acc, transaction) => acc + transaction.amount, 0);
+    function sumAmounts(): Record<string, number> {
+        // Sum all amounts and group by currency
+        return transactionsCurrentTravel.reduce((acc: Record<string, number>, transaction: Transaction) => {
+            const currencySymbol = transaction.currency.symbol;
+            if (acc[currencySymbol]) {
+                acc[currencySymbol] += transaction.amount;
+            } else {
+                acc[currencySymbol] = transaction.amount;
+            }
+            return acc;
+        }, {});
+    }
+
+    function displaySumAmounts() {
+        return (
+            <>
+                <ul>
+                    {Object.entries(sumAmounts()).map(([currencySymbol, amount]: [string, number]) => (
+                        <li key={currencySymbol}>
+                            {amount.toFixed(2)} {currencySymbol}
+                        </li>
+                    ))}
+                </ul>
+            </>
+        )
     }
 
     return (
@@ -72,7 +87,7 @@ function TransactionList({currentTravelId}: TransactionListProps) {
                         <TableHead className="">Total</TableHead>
                         <TableHead/>
                         <TableHead/>
-                        <TableHead className="text-right">{sumAmounts()}</TableHead>
+                        <TableHead className="text-right">{displaySumAmounts()}</TableHead>
                     </TableFooter>
                 </Table>
             </Card>
