@@ -165,7 +165,7 @@ function TravelAddEditForm({updateCurrentTravel, closeDialog, formMode, currentT
                         <FormField
                             control={form.control}
                             name="country"
-                            render={({field}: any) => (<FormItem>
+                            render={({field}) => (<FormItem>
                                 <FormLabel>Country</FormLabel>
                                 <Select
                                     onValueChange={field.onChange}
@@ -195,7 +195,7 @@ function TravelAddEditForm({updateCurrentTravel, closeDialog, formMode, currentT
                         <FormField
                             control={form.control}
                             name="currency"
-                            render={({field}: any) => (<FormItem>
+                            render={({field}) => (<FormItem>
                                 <FormLabel>Local currency</FormLabel>
                                 <Select
                                     onValueChange={field.onChange}
@@ -224,7 +224,7 @@ function TravelAddEditForm({updateCurrentTravel, closeDialog, formMode, currentT
                         <FormField
                             control={form.control}
                             name={"startDate"}
-                            render={({field}: any) => (<FormItem>
+                            render={({field}) => (<FormItem>
                                 <FormLabel>Start of trip</FormLabel>
                                 <Popover>
                                     <PopoverTrigger asChild>
@@ -261,7 +261,7 @@ function TravelAddEditForm({updateCurrentTravel, closeDialog, formMode, currentT
                         <FormField
                             control={form.control}
                             name="endDate"
-                            render={({field}: any) => (<FormItem>
+                            render={({field}) => (<FormItem>
                                 <FormLabel>End of trip</FormLabel>
                                 <Popover>
                                     <PopoverTrigger asChild>
@@ -285,12 +285,7 @@ function TravelAddEditForm({updateCurrentTravel, closeDialog, formMode, currentT
                                             selected={field.value}
                                             onSelect={field.onChange}
                                             disabled={(date: Date): boolean => {
-                                                let startDate: Date | undefined = form.getValues("startDate");
-                                                if (startDate) {
-                                                    return date < startDate
-                                                } else {
-                                                    return true
-                                                }
+                                                return form.getValues("startDate") ? date < form.getValues("startDate")! : true;
                                             }}
                                             initialFocus
                                         />
