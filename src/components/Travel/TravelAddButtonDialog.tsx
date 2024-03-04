@@ -2,7 +2,7 @@
 import {useState} from "react";
 // Types, Enums
 import {Travel} from "@/types.ts";
-import {TravelFormMode} from "@/enums.ts";
+import {DatabaseFormMode} from "@/enums.ts";
 // Components
 import TravelAddEditForm from "@/components/Travel/TravelAddEditForm.tsx";
 // UI
@@ -45,7 +45,7 @@ function TravelAddButtonDialog(props: TravelAddButtonDialogProps) {
                 {/* Form */}
                 <TravelAddEditForm
                     closeDialog={() => setDialogState(false)}
-                    formMode={TravelFormMode.ADD}
+                    formMode={DatabaseFormMode.ADD}
                     {...props}
                 />
             </DialogContent>

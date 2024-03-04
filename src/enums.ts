@@ -1,4 +1,4 @@
-export enum TravelFormMode {
+export enum DatabaseFormMode {
     ADD = 'add',
     EDIT = 'edit',
 }

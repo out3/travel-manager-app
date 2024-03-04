@@ -8,8 +8,10 @@ export type Currency = {
     symbol: string;
 }
 
+export type TravelId = number;
+
 export type Travel = {
-    rowid: number;
+    rowid: TravelId;
     created_at: Date;
     country: Country;
     currency: Currency;
@@ -17,12 +19,14 @@ export type Travel = {
     end_date: Date | undefined;
 }
 
+export type TransactionId = number;
+
 export type Transaction = {
-    rowid: number;
-    travel_id: number;
+    rowid: TransactionId;
+    travel_id: TravelId;
     description: string;
     amount: number;
     currency: Currency;
     transaction_date: Date;
-     notes: string;
+    notes: string;
 }

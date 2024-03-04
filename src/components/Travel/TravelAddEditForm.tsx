@@ -5,7 +5,7 @@ import {useEffect, useState} from "react";
 import {useCustomToast} from "@/lib/toastHandlers.tsx"
 // Types, Enums
 import {Country, Currency, Travel} from '@/types.ts';
-import {TravelFormMode} from '@/enums.ts'
+import {DatabaseFormMode} from '@/enums.ts'
 // Form validation
 import {useForm} from "react-hook-form"
 import {zodResolver} from "@hookform/resolvers/zod"
@@ -36,7 +36,7 @@ const formSchema = z.object({
 type TravelFormProps = {
     updateCurrentTravel: (travel: Travel) => void
     closeDialog: () => void
-    formMode: TravelFormMode
+    formMode: DatabaseFormMode
     currentTravel?: Travel
 }
 
@@ -65,7 +65,7 @@ function TravelAddEditForm({updateCurrentTravel, closeDialog, formMode, currentT
             setIsLoaded(true);
         }
         // If formMode set to EDIT, set form values to current travel
-        if (formMode === TravelFormMode.EDIT && currentTravel) {
+        if (formMode === DatabaseFormMode.EDIT && currentTravel) {
             form.setValue("country", String(currentTravel.country.code));
             form.setValue("currency", currentTravel.currency.code);
             if (currentTravel.start_date) {
@@ -147,11 +147,11 @@ function TravelAddEditForm({updateCurrentTravel, closeDialog, formMode, currentT
 
     function onSubmit(travel: z.infer<typeof formSchema>): void {
         // If formMode set to ADD => Create a new travel
-        if (formMode === TravelFormMode.ADD) {
+        if (formMode === DatabaseFormMode.ADD) {
             createTravel(travel);
         }
         // If formMode set to EDIT => Edit the current travel
-        else if (formMode === TravelFormMode.EDIT) {
+        else if (formMode === DatabaseFormMode.EDIT) {
             editTravel(travel);
         }
     }
