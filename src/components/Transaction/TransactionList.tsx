@@ -5,6 +5,9 @@ import {useEffect, useState} from 'react';
 import {useCustomToast} from "@/lib/toastHandlers.tsx";
 // Types
 import {Transaction} from '@/types.ts';
+// Components
+import TransactionAddButtonDialog from "@/components/Transaction/TransactionAddButtonDialog.tsx";
+import TransactionEditButtonDialog from "@/components/Transaction/TransactionEditButtonDialog.tsx";
 // UI
 import {Table, TableBody, TableCell, TableFooter, TableHead, TableHeader, TableRow,} from "@/components/ui/table"
 import {Card} from "@/components/ui/card.tsx";
@@ -22,7 +25,7 @@ function TransactionList({currentTravelId}: TransactionListProps) {
     // List of transactions
     const [transactionsCurrentTravel, setTransactionsCurrentTravel] = useState<Transaction[]>([]);
 
-    // Update transactions
+    // Get all transactions for the current travel
     useEffect(() => {
         (invoke('get_transactions_for_travel', {travelId: currentTravelId}) as Promise<Transaction[]>)
             .then((transactions: Transaction[]) => {
@@ -30,6 +33,20 @@ function TransactionList({currentTravelId}: TransactionListProps) {
             })
             .catch((err: string) => toastError(err))
     }, [currentTravelId])
+
+    function createTransaction(transaction: Transaction) {
+        setTransactionsCurrentTravel(prevState  => {
+            return [...prevState, transaction];
+        })
+    }
+    function updateTransaction(transaction: Transaction) {
+        setTransactionsCurrentTravel(prevState => {
+            const index = prevState.findIndex((t: Transaction) => t.rowid === transaction.rowid);
+            prevState[index] = transaction;
+            return [...prevState];
+            }
+        )
+    }
 
     // Function to sum transactions amounts
     function sumAmounts(): Record<string, number> {
@@ -69,9 +86,11 @@ function TransactionList({currentTravelId}: TransactionListProps) {
                             <TableHead>Date</TableHead>
                             <TableHead>Notes</TableHead>
                             <TableHead className="text-right">Amount</TableHead>
+                            <TableHead></TableHead>
                         </TableRow>
                     </TableHeader>
                     <TableBody>
+                        {/* List of transactions */}
                         {transactionsCurrentTravel.map((transaction: Transaction) => (
                             <TableRow>
                                 <TableCell className="font-medium">{transaction.description}</TableCell>
@@ -79,6 +98,13 @@ function TransactionList({currentTravelId}: TransactionListProps) {
                                 <TableCell>{transaction.notes}</TableCell>
                                 <TableCell className="text-right">
                                     {transaction.amount} {transaction.currency.symbol}
+                                </TableCell>
+                                <TableCell className="w-1">
+                                    <TransactionEditButtonDialog
+                                        currentTravelId={currentTravelId}
+                                        transaction={transaction}
+                                        updateTransaction={updateTransaction}
+                                    />
                                 </TableCell>
                             </TableRow>
                         ))}
@@ -88,8 +114,16 @@ function TransactionList({currentTravelId}: TransactionListProps) {
                         <TableHead/>
                         <TableHead/>
                         <TableHead className="text-right">{displaySumAmounts()}</TableHead>
+                        <TableHead></TableHead>
                     </TableFooter>
                 </Table>
+                {/* Transaction add button */}
+                <div className="flex justify-end m-2 mt-4">
+                    <TransactionAddButtonDialog
+                        currentTravelId={currentTravelId}
+                        updateTransaction={createTransaction}
+                    />
+                </div>
             </Card>
         </>
     )
