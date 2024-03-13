@@ -6,6 +6,7 @@ export type Country = {
 export type Currency = {
     code: string;
     symbol: string;
+    exponent: number; // Number of decimal places
 }
 
 export type TravelId = number;

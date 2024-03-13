@@ -15,19 +15,19 @@ import {format} from "date-fns";
 import {Button} from "@/components/ui/button.tsx"
 import {Calendar} from "@/components/ui/calendar.tsx";
 import {Form, FormControl, FormField, FormItem, FormLabel, FormMessage} from "@/components/ui/form.tsx"
+import {Input} from "@/components/ui/input.tsx";
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select.tsx"
 import {Popover, PopoverContent, PopoverTrigger} from "@/components/ui/popover.tsx";
+import {Textarea} from "@/components/ui/textarea.tsx";
 // Icons
 import {CalendarIcon} from '@radix-ui/react-icons';
-import {Input} from "@/components/ui/input.tsx";
-import {Textarea} from "@/components/ui/textarea.tsx";
 
 
 // Form schema to specify validation rules
 const formSchema = z.object({
     description: z.string(),
     amount: z.coerce.number().safe().finite(),
-    currency: z.string().length(3, {message: 'Currency not selected'}), // Dates must be in the right format, can also be optional
+    currency: z.string().length(3, {message: 'Currency not selected'}),
     transactionDate: z.coerce.date(),
     notes: z.string().optional(),
 })
@@ -69,12 +69,12 @@ function TransactionAddEditForm({
             fetchCurrencies();
             setIsLoaded(true);
         }
-        // If formMode set to EDIT, set form values to current travel
+        // If formMode set to EDIT, set transaction values to form
         if (formMode === DatabaseFormMode.EDIT && transaction) {
             form.setValue("description", transaction.description);
             form.setValue("amount", transaction.amount);
             form.setValue("currency", transaction.currency.code);
-            form.setValue("transactionDate",transaction.transaction_date);
+            form.setValue("transactionDate", transaction.transaction_date);
             if (transaction.notes) {
                 form.setValue("notes", transaction.notes);
             }
@@ -91,6 +91,21 @@ function TransactionAddEditForm({
             .catch((err: string) => toastError(err));
     }
 
+    // Function to edit amount's values based on currency
+    function updateAmountValue(): void {
+        const formCurrency = form.getValues("currency");
+        let amount = form.getValues("amount");
+        // getValues can return a string, format it to a number
+        if (typeof (amount) !== 'number') {
+            amount = parseFloat(amount);
+        }
+
+        // Update amount's decimals based on currency
+        if (formCurrency && !isNaN(amount)) {
+            const currency = currencies.find((currency) => currency.code === formCurrency)!;
+            form.setValue("amount", parseFloat(amount.toFixed(currency.exponent)));
+        }
+    }
 
     function createTransaction(form_transaction: z.infer<typeof formSchema>): void {
         (invoke('create_transaction', {
@@ -102,13 +117,14 @@ function TransactionAddEditForm({
             notes: form_transaction.notes ? form_transaction.notes : "",
         }) as Promise<Transaction>)
             .then((data: Transaction) => {
-                // Execute callback to re-render travels
+                // Execute callback to re-render transactions
                 updateTransaction(data);
                 // Display a success notification
                 const msg = (
                     <>
                         {data.description + "\n"}
-                        {data.amount + data.currency.symbol + "-" + data.transaction_date.toLocaleString()}
+                        {data.amount + " " +data.currency.symbol}
+                        {"\n" + data.transaction_date.toLocaleString()}
                         {data.notes ? ("\n" + data.notes) : null}
                     </>
                 )
@@ -130,13 +146,14 @@ function TransactionAddEditForm({
             notes: form_transaction.notes ? form_transaction.notes : "",
         }) as Promise<Transaction>)
             .then((data: Transaction) => {
-                // Execute callback to re-render travels
+                // Execute callback to re-render transactions
                 updateTransaction(data);
                 // Display a success notification
                 const msg = (
                     <>
                         {data.description + "\n"}
-                        {data.amount + data.currency.symbol + "-" + data.transaction_date.toLocaleString()}
+                        {data.amount + " " + data.currency.symbol}
+                        {"\n" + data.transaction_date.toLocaleString()}
                         {data.notes ? ("\n" + data.notes) : null}
                     </>
                 )
@@ -215,23 +232,28 @@ function TransactionAddEditForm({
                             />
                         </div>
                         {/* Amount */}
-                        <div className="space-y-2 col-span-full md:col-span-1"><FormField
-                            control={form.control}
-                            name="amount"
-                            render={({field}) => (
-                                <FormItem>
-                                    <FormLabel>Amount</FormLabel>
-                                    <FormControl>
-                                        <Input
-                                            placeholder="Amount"
-                                            type="number"
-                                            {...field}
-                                        />
-                                    </FormControl>
-                                    <FormMessage/>
-                                </FormItem>
-                            )}
-                        />
+                        <div className="space-y-2 col-span-full md:col-span-1">
+                            <FormField
+                                control={form.control}
+                                name="amount"
+                                render={({field}) => (
+                                    <FormItem>
+                                        <FormLabel>Amount</FormLabel>
+                                        <FormControl>
+                                            <Input
+                                                placeholder="Amount"
+                                                type="number"
+                                                {...field}
+                                                onChange={(e) => {
+                                                    field.onChange(e);
+                                                    updateAmountValue();
+                                                }}
+                                            />
+                                        </FormControl>
+                                        <FormMessage/>
+                                    </FormItem>
+                                )}
+                            />
 
                         </div>
                         {/* Currency */}
@@ -242,8 +264,11 @@ function TransactionAddEditForm({
                                 render={({field}) => (<FormItem>
                                     <FormLabel>Currency</FormLabel>
                                     <Select
-                                        onValueChange={field.onChange}
-                                        value={field.value}
+                                        onValueChange={(value) => {
+                                            field.onChange(value);
+                                            updateAmountValue();
+                                        }}
+                                        {...field}
                                     >
                                         <FormControl>
                                             <SelectTrigger>

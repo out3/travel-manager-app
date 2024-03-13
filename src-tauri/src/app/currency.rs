@@ -11,7 +11,8 @@ use sqlx::sqlite::{SqliteArgumentValue, SqliteTypeInfo, SqliteValueRef};
 #[derive(Serialize, Clone, Debug, PartialEq)]
 pub struct Currency {
     pub code: String,
-    pub symbol: String
+    pub symbol: String,
+    pub exponent: u16,
 }
 
 impl fmt::Display for Currency {
@@ -29,6 +30,7 @@ impl TryFrom<&str> for Currency {
         Ok(Currency {
             code: i.code().to_string(),
             symbol: i.symbol().symbol.to_string(),
+            exponent: i.exponent().unwrap_or_else(|| 0),
         })
     }
 }
@@ -37,7 +39,8 @@ impl Into<Currency> for iso_currency::Currency {
     fn into(self) -> Currency {
         Currency {
             code: self.code().to_string(),
-            symbol: self.symbol().symbol.to_string()
+            symbol: self.symbol().symbol.to_string(),
+            exponent: self.exponent().unwrap_or_else(|| 0)
         }
     }
 }
@@ -60,11 +63,12 @@ impl<'q> Encode<'q, Sqlite> for Currency {
 impl<'r> Decode<'r, Sqlite> for Currency {
     fn decode(value: SqliteValueRef<'r>) -> Result<Self, BoxDynError> {
         let currency_code_str = <&str as Decode<Sqlite>>::decode(value)?;
-        let currency_code = iso_currency::Currency::from_code(currency_code_str)
+        let currency = iso_currency::Currency::from_code(currency_code_str)
             .ok_or("Currency unknown")?;
         Ok(Currency {
-            code: currency_code.code().into(),
-            symbol: currency_code.symbol().symbol.into()
+            code: currency.code().into(),
+            symbol: currency.symbol().symbol.into(),
+            exponent: currency.exponent().unwrap_or_else(|| 0),
         })
     }
 }

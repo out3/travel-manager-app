@@ -4,13 +4,14 @@ import {invoke} from "@tauri-apps/api/tauri";
 import {useEffect, useState} from 'react';
 import {useCustomToast} from "@/lib/toastHandlers.tsx";
 // Types
-import {Transaction} from '@/types.ts';
+import {Currency, Transaction} from '@/types.ts';
 // Components
 import TransactionAddButtonDialog from "@/components/Transaction/TransactionAddButtonDialog.tsx";
 import TransactionEditButtonDialog from "@/components/Transaction/TransactionEditButtonDialog.tsx";
 // UI
 import {Table, TableBody, TableCell, TableFooter, TableHead, TableHeader, TableRow,} from "@/components/ui/table"
 import {Card} from "@/components/ui/card.tsx";
+import {displayTransactionValue} from "@/lib/utils.ts";
 
 // Props interface
 type TransactionListProps = {
@@ -52,11 +53,11 @@ function TransactionList({currentTravelId}: TransactionListProps) {
     function sumAmounts(): Record<string, number> {
         // Sum all amounts and group by currency
         return transactionsCurrentTravel.reduce((acc: Record<string, number>, transaction: Transaction) => {
-            const currencySymbol = transaction.currency.symbol;
-            if (acc[currencySymbol]) {
-                acc[currencySymbol] += transaction.amount;
+            const currency = JSON.stringify(transaction.currency);
+            if (acc[currency]) {
+                acc[currency] += transaction.amount;
             } else {
-                acc[currencySymbol] = transaction.amount;
+                acc[currency] = transaction.amount;
             }
             return acc;
         }, {});
@@ -66,9 +67,9 @@ function TransactionList({currentTravelId}: TransactionListProps) {
         return (
             <>
                 <ul>
-                    {Object.entries(sumAmounts()).map(([currencySymbol, amount]: [string, number]) => (
-                        <li key={currencySymbol}>
-                            {amount.toFixed(2)} {currencySymbol}
+                    {Object.entries(sumAmounts()).map(([currency, amount]: [string, number]) => (
+                        <li key={currency}>
+                            {displayTransactionValue(amount, (JSON.parse(currency) as Currency))}
                         </li>
                     ))}
                 </ul>
@@ -97,7 +98,7 @@ function TransactionList({currentTravelId}: TransactionListProps) {
                                 <TableCell>{transaction.transaction_date.toLocaleString()}</TableCell>
                                 <TableCell>{transaction.notes}</TableCell>
                                 <TableCell className="text-right">
-                                    {transaction.amount} {transaction.currency.symbol}
+                                    {displayTransactionValue(transaction.amount, transaction.currency)}
                                 </TableCell>
                                 <TableCell className="w-1">
                                     <TransactionEditButtonDialog
