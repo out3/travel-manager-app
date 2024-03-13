@@ -63,6 +63,13 @@ pub async fn create_transaction(
     let transaction_date: Option<NaiveDate> = NaiveDate::parse_from_str(&*transaction_date, "%d/%m/%Y")
         .ok();
 
+    // Verifications
+    // Amount decimal must follow currency's exponent
+    let currency_exponent = currency_wrapper.exponent;
+    if (amount.fract() > 0.0) && amount.fract().to_string().len() > currency_exponent as usize {
+        return Err("Amount decimal must follow currency's exponent".to_string());
+    }
+
     // Perform query
     let transaction_created = sqlx::query_as::<_, Transaction>(r#"
         INSERT INTO "transaction" (travel_id, description, amount, currency, transaction_date, notes)
@@ -103,6 +110,13 @@ pub async fn update_transaction(
     // Convert string date to Option<NaiveDate>
     let transaction_date: Option<NaiveDate> = NaiveDate::parse_from_str(&*transaction_date, "%d/%m/%Y")
         .ok();
+
+    // Verifications
+    // Amount decimal must follow currency's exponent
+    let currency_exponent = currency_wrapper.exponent;
+    if (amount.fract() > 0.0) && amount.fract().to_string().len() > currency_exponent as usize {
+        return Err("Amount decimal must follow currency's exponent".to_string());
+    }
 
     // Perform query
     let transaction_updated = sqlx::query_as::<_, Transaction>(r#"
