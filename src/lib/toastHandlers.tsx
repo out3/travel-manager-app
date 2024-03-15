@@ -9,7 +9,7 @@ export function useCustomToast() {
         toast({
             variant: "destructive",
             title: title,
-            description: (<pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
+            description: (<pre className="md:max-w-[355px] overflow-x-auto mt-2 rounded-md bg-slate-950 p-4">
                             <code className="text-gray-300">{err}</code>
                         </pre>),
         })
@@ -18,7 +18,7 @@ export function useCustomToast() {
     function toastMessage(msg: any, title: string): void {
         toast({
             title: title,
-            description: (<pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
+            description: (<pre className="md:max-w-[355px] overflow-x-auto mt-2 w-full rounded-md bg-slate-950 p-4">
                             <code className="text-gray-300">{msg}</code>
                         </pre>),
         });
