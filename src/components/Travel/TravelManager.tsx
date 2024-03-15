@@ -30,6 +30,13 @@ function TravelManager({currentTravel, updateCurrentTravel}: TravelManagerProps)
         // Update the list of travels and the current travel
         (invoke('get_travels') as Promise<Travel[]>)
             .then((allTravels: Travel[]) => {
+                // Fix date format
+                allTravels.forEach((travel: Travel) => {
+                    travel.created_at = new Date(travel.created_at);
+                    travel.start_date? travel.start_date = new Date(travel.start_date) : null;
+                    travel.end_date? travel.end_date = new Date(travel.end_date) : null;
+                });
+
                 // Set the list of travels
                 setTravels(allTravels);
 

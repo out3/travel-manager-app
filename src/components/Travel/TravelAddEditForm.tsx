@@ -95,6 +95,30 @@ function TravelAddEditForm({updateCurrentTravel, closeDialog, formMode, currentT
             .catch((err: string) => toastError(err));
     }
 
+    function travelChangeSuccess(data: Travel) {
+        // Fix date format
+        data.created_at = new Date(data.created_at);
+        data.start_date ? data.start_date = new Date(data.start_date) : null;
+        data.end_date ? data.end_date = new Date(data.end_date) : null;
+        // Execute callback to re-render travels
+        updateCurrentTravel(data);
+        // Display a success notification
+        const msg = (
+            <>
+                {"Country:\t" + data.country.name}
+                {"\nCurrency:\t" + data.currency.code + " (" + data.currency.symbol + ")"}
+                {data.start_date?
+                    (" \nDate:\t\t" + data.start_date.toLocaleDateString()) : null
+                }
+                {data.end_date ?
+                    (" to " + data.end_date.toLocaleDateString()) : null
+                }
+            </>
+        )
+        toastMessage(msg, "The following travel has been edited:");
+        // Close modal
+        closeDialog();
+    }
 
     function createTravel(travel: z.infer<typeof formSchema>): void {
         (invoke('create_travel', {
@@ -104,19 +128,7 @@ function TravelAddEditForm({updateCurrentTravel, closeDialog, formMode, currentT
             endDate: travel.endDate ? travel.endDate.toLocaleDateString() : ""
         }) as Promise<Travel>)
             .then((data: Travel) => {
-                // Display a success notification
-                const msg = (
-                    <>
-                        {data.country.name} - {data.currency.code} ({data.currency.symbol})
-                        {data.start_date ? ("\n" + data.start_date.toLocaleString()) : null}
-                        {data.end_date ? (" to " + data.end_date.toLocaleString()) : null}
-                    </>
-                )
-                toastMessage(msg, "The following travel has been created:");
-                // Close modal
-                closeDialog();
-                // Execute callback to re-render travels
-                updateCurrentTravel(data);
+                travelChangeSuccess(data);
             })
             .catch((err: string) => toastError(err, "Error while creating travel:"))
     }
@@ -130,17 +142,7 @@ function TravelAddEditForm({updateCurrentTravel, closeDialog, formMode, currentT
             endDate: travel.endDate ? travel.endDate.toLocaleDateString() : ""
         }) as Promise<Travel>)
             .then((data: Travel) => {
-                // Execute callback to re-render travels
-                updateCurrentTravel(data);
-                const msg = (
-                    <>
-                        {data.country.name} - {data.currency.code} ({data.currency.symbol})
-                        {data.start_date ? ("\n" + data.start_date.toLocaleString()) : null}
-                        {data.end_date ? (" to " + data.end_date.toLocaleString()) : null}
-                    </>
-                )
-                toastMessage(msg, "The following travel has been edited:");
-                closeDialog();
+                travelChangeSuccess(data);
             })
             .catch((err: string) => toastError(err, "Error while updating travel:"))
     }

@@ -30,6 +30,10 @@ function TransactionList({currentTravelId}: TransactionListProps) {
     useEffect(() => {
         (invoke('get_transactions_for_travel', {travelId: currentTravelId}) as Promise<Transaction[]>)
             .then((transactions: Transaction[]) => {
+                // Fix date format
+                transactions.forEach((transaction: Transaction) => {
+                    transaction.transaction_date = new Date(transaction.transaction_date);
+                });
                 setTransactionsCurrentTravel(transactions);
             })
             .catch((err: string) => toastError(err))
@@ -95,7 +99,7 @@ function TransactionList({currentTravelId}: TransactionListProps) {
                         {transactionsCurrentTravel.map((transaction: Transaction) => (
                             <TableRow>
                                 <TableCell className="font-medium">{transaction.description}</TableCell>
-                                <TableCell>{transaction.transaction_date.toLocaleString()}</TableCell>
+                                <TableCell>{transaction.transaction_date.toLocaleDateString()}</TableCell>
                                 <TableCell>{transaction.notes}</TableCell>
                                 <TableCell className="text-right">
                                     {displayTransactionValue(transaction.amount, transaction.currency)}

@@ -65,8 +65,8 @@ function TravelList({travelsList, currentTravel, updateCurrentTravel}: TravelAdd
                                 >
                                     {travel.country.name}
                                     <pre className="text-gray-500">
-                                        {travel.start_date ? " | " + travel.start_date.toString() : ""}
-                                        {travel.end_date ? " ~ " + travel.end_date.toString() : ""}
+                                        {travel.start_date ? " | " + travel.start_date.toLocaleDateString() : ""}
+                                        {travel.end_date ? " ~ " + travel.end_date.toLocaleDateString() : ""}
                                     </pre>
                                     <CheckIcon
                                         className={cn(

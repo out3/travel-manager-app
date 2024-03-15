@@ -107,6 +107,25 @@ function TransactionAddEditForm({
         }
     }
 
+    function transactionChangeSuccess(data: Transaction) {
+        // Fix date format
+        data.transaction_date = new Date(data.transaction_date);
+        // Execute callback to re-render transactions
+        updateTransaction(data);
+        // Display a success notification
+        const msg = (
+            <>
+                {"Description:\t" + data.description.trim()}
+                {"\n" + "Amount:\t\t\t" + data.amount + " " + data.currency.symbol}
+                {"\n" + "Date:\t\t\t" + data.transaction_date.toLocaleDateString()}
+                {data.notes ? ("\n" + "Notes:\t\t\t " + data.notes.trim()) : null}
+            </>
+        )
+        toastMessage(msg, "The following transaction has been created:");
+        // Close modal
+        closeDialog();
+    }
+
     function createTransaction(form_transaction: z.infer<typeof formSchema>): void {
         (invoke('create_transaction', {
             travelId: currentTravelId,
@@ -117,20 +136,7 @@ function TransactionAddEditForm({
             notes: form_transaction.notes ? form_transaction.notes : "",
         }) as Promise<Transaction>)
             .then((data: Transaction) => {
-                // Execute callback to re-render transactions
-                updateTransaction(data);
-                // Display a success notification
-                const msg = (
-                    <>
-                        {data.description + "\n"}
-                        {data.amount + " " +data.currency.symbol}
-                        {"\n" + data.transaction_date.toLocaleString()}
-                        {data.notes ? ("\n" + data.notes) : null}
-                    </>
-                )
-                toastMessage(msg, "The following transaction has been created:");
-                // Close modal
-                closeDialog();
+                transactionChangeSuccess(data);
             })
             .catch((err: string) => toastError(err, "Error while creating transaction:"))
     }
@@ -146,19 +152,7 @@ function TransactionAddEditForm({
             notes: form_transaction.notes ? form_transaction.notes : "",
         }) as Promise<Transaction>)
             .then((data: Transaction) => {
-                // Execute callback to re-render transactions
-                updateTransaction(data);
-                // Display a success notification
-                const msg = (
-                    <>
-                        {data.description + "\n"}
-                        {data.amount + " " + data.currency.symbol}
-                        {"\n" + data.transaction_date.toLocaleString()}
-                        {data.notes ? ("\n" + data.notes) : null}
-                    </>
-                )
-                toastMessage(msg, "The following transaction has been edited:");
-                closeDialog();
+                transactionChangeSuccess(data);
             })
             .catch((err: string) => toastError(err, "Error while updating transaction:"))
     }
