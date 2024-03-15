@@ -124,7 +124,7 @@ pub async fn create_travel(
 #[tauri::command]
 pub async fn update_travel(
     conn: tauri::State<'_, db::DbConnection>,
-    travel_id: i64,
+    travel_id: TravelId,
     country: String,
     currency: String,
     start_date: String,
