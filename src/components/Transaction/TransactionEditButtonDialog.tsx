@@ -39,7 +39,7 @@ function TransactionEditButtonDialog(props: TransactionEditButtonDialogProps) {
                     "
                 />
             </DialogTrigger>
-            <DialogContent>
+            <DialogContent className="overflow-y-auto max-h-screen">
                 <DialogHeader>
                     <DialogTitle>Edit transaction</DialogTitle>
                     <DialogDescription>

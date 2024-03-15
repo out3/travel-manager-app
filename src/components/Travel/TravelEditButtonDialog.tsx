@@ -37,7 +37,7 @@ function TravelAddButtonDialog(props: TravelEditButtonDialogProps) {
                     <Pencil1Icon className="h-10 w-10"/>
                 </Button>
             </DialogTrigger>
-            <DialogContent>
+            <DialogContent className="overflow-y-auto max-h-screen">
                 <DialogHeader>
                     <DialogTitle>Edit travel</DialogTitle>
                     <DialogDescription>

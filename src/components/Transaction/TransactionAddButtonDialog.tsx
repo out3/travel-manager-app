@@ -37,7 +37,7 @@ function TransactionAddButtonDialog(props: TransactionAddButtonDialogProps) {
                     <PlusIcon className="h-6 w-6 ml-2"/>
                 </Button>
             </DialogTrigger>
-            <DialogContent>
+            <DialogContent className="overflow-y-auto max-h-screen">
                 <DialogHeader>
                     <DialogTitle>Add a new transaction</DialogTitle>
                 </DialogHeader>

@@ -35,7 +35,7 @@ function TravelAddButtonDialog(props: TravelAddButtonDialogProps) {
                     <PlusIcon className="h-10 w-10"/>
                 </Button>
             </DialogTrigger>
-            <DialogContent>
+            <DialogContent className="overflow-y-auto max-h-screen">
                 <DialogHeader>
                     <DialogTitle>Add a new travel</DialogTitle>
                     <DialogDescription>
