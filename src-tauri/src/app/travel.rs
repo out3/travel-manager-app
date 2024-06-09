@@ -108,7 +108,7 @@ pub async fn create_travel(
         VALUES ($1, $2, $3, $4, $5)
         RETURNING ROWID, *
     "#)
-        .bind(chrono::Local::now().naive_local()) // Today's date
+        .bind(chrono::Local::now().date_naive()) // Today's date
         .bind(country_wrapper)
         .bind(currency_wrapper)
         .bind(start_date)
