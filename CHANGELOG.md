@@ -5,9 +5,23 @@ This file documents all significant changes to this project.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [0.4.0] - 
+## [0.4.0] - 2024-06-09 
+### Added
+- User can now add and edit transactions made in a travel
+
+
+- Added React Router
+- Added pages to `Dashboard` and `Transactions` 
+- Added `Transaction` model (Frontend and Backend)
+- Added Transaction components `TransactionList`, `TransactionAddEditForm`, `TransactionAddButtonDialog`, `TransactionEditButtonDialog`
+- Added skeletons components when no travel is available for `Transaction` and `Travel`
+ 
 ### Changed
 - Modified `TravelInfo` to follow application's UI
+- `Travel` now has a `created_at` field
+- `Currency` has now a `exponent` field to handle currency precision
+- Normalised SQL queries
+- Made a few changes to enum (rename `TravelFormMode` to `DatabaseFormMode`) and types (introduced `TravelId` and `TransactionId`)
 
 ### Fixed
 - Fixed an issue where the frontend was receiving dates as strings instead of `Date` objects
