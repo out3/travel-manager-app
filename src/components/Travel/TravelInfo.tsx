@@ -25,21 +25,21 @@ function TravelInfo({currentTravel}: TravelInfoProps) {
         switch (true) {
             // If the current travel has no dates
             case (!currentTravel.start_date):
-                return <Progress value={percentage}/>;
+                return <Progress key="travelProgress" value={percentage}/>;
             // If the current travel has a start date but has not started
             case (currentTravel.start_date && todayDate < currentTravel.start_date):
                 percentage = Math.round((todayDate.getTime() - currentTravel.created_at.getTime()) / (currentTravel.start_date.getTime() - currentTravel.created_at.getTime()) * 100);
-                return <Progress value={percentage} indicatorClassName="bg-blue-400"/>;
+                return <Progress key="travelProgress" value={percentage} indicatorClassName="bg-blue-400"/>;
             // If the current travel is in progress but has no end date
             case (currentTravel.start_date && todayDate > currentTravel.start_date && !currentTravel.end_date):
-                return <Progress value={percentage} indicatorClassName="bg-green-400"/>;
+                return <Progress key="travelProgress" value={percentage} indicatorClassName="bg-green-400"/>;
             // If the current travel is in progress and has an end date
             case (currentTravel.start_date && todayDate > currentTravel.start_date && currentTravel.end_date && todayDate < currentTravel.end_date):
                 percentage = Math.round((todayDate.getTime() - currentTravel.start_date.getTime()) / (currentTravel.end_date.getTime() - currentTravel.start_date.getTime()) * 100);
-                return <Progress value={percentage} indicatorClassName="bg-green-400"/>;
+                return <Progress key="travelProgress" value={percentage} indicatorClassName="bg-green-400"/>;
             // If the current travel has ended
             default:
-                return <Progress value={percentage} indicatorClassName="bg-red-400"/>;
+                return <Progress key="travelProgress" value={percentage} indicatorClassName="bg-red-400"/>;
         }
     }
 
@@ -48,7 +48,7 @@ function TravelInfo({currentTravel}: TravelInfoProps) {
         // Add the start date if it exists
         if (currentTravel.start_date) {
             output.push(
-                <div className="flex justify-start mb-2">
+                <div key="travelStartDate" className="flex justify-start mb-2">
                     <PaperPlaneIcon className="-rotate-45 h-4 w-4 self-center mr-2"/>
                     {currentTravel.start_date ? currentTravel.start_date.toLocaleDateString() : ""}
                 </div>)
@@ -58,7 +58,7 @@ function TravelInfo({currentTravel}: TravelInfoProps) {
         // Add the end date if it exists
         if (currentTravel.end_date) {
             output.push(
-                <div className="flex justify-end mt-2">
+                <div key="travelEndDate" className="flex justify-end mt-2">
                     {currentTravel.end_date ? currentTravel.end_date.toLocaleDateString() : ""}
                     <PaperPlaneIcon className="rotate-45 h-4 w-4 self-end ml-2"/>
                 </div>

@@ -97,7 +97,7 @@ function TransactionList({currentTravelId}: TransactionListProps) {
                     <TableBody>
                         {/* List of transactions */}
                         {transactionsCurrentTravel.map((transaction: Transaction) => (
-                            <TableRow>
+                            <TableRow key={transaction.rowid}>
                                 <TableCell className="font-medium">{transaction.description}</TableCell>
                                 <TableCell>{transaction.transaction_date.toLocaleDateString()}</TableCell>
                                 <TableCell>{transaction.notes}</TableCell>
@@ -115,11 +115,13 @@ function TransactionList({currentTravelId}: TransactionListProps) {
                         ))}
                     </TableBody>
                     <TableFooter>
-                        <TableHead className="">Total</TableHead>
-                        <TableHead/>
-                        <TableHead/>
-                        <TableHead className="text-right">{displaySumAmounts()}</TableHead>
-                        <TableHead></TableHead>
+                        <TableRow>
+                            <TableCell className="">Total</TableCell>
+                            <TableCell/>
+                            <TableCell/>
+                            <TableCell className="text-right">{displaySumAmounts()}</TableCell>
+                            <TableCell></TableCell>
+                        </TableRow>
                     </TableFooter>
                 </Table>
                 {/* Transaction add button */}

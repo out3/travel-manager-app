@@ -1,5 +1,5 @@
 // UI
-import {Card, CardContent, CardDescription, CardHeader, CardTitle} from "@/components/ui/card";
+import {Card, CardContent, CardHeader} from "@/components/ui/card";
 import {Progress} from "@/components/ui/progress";
 import {Separator} from "@/components/ui/separator.tsx";
 import {Skeleton} from "@/components/ui/skeleton.tsx";
@@ -12,12 +12,8 @@ function TravelInfoSkeleton() {
         <>
             <Card className="w-[300px]">
                 <CardHeader>
-                    <CardTitle>
-                        <Skeleton className="h-4 w-[200px]"/>
-                    </CardTitle>
-                    <CardDescription>
-                        <Skeleton className="h-4 w-[150px]"/>
-                    </CardDescription>
+                    <Skeleton className="h-4 w-[200px]"/>
+                    <Skeleton className="h-4 w-[150px]"/>
                     <Separator/>
                 </CardHeader>
                 <CardContent>

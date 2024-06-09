@@ -26,8 +26,8 @@ function TransactionListSkeleton() {
                         </TableRow>
                     </TableHeader>
                     <TableBody>
-                        {[...Array(10)].map(() => (
-                            <TableRow>
+                        {[...Array(10).keys()].map((x) => (
+                            <TableRow key={x}>
                                 <TableCell className="font-medium"><Skeleton className="h-4 w-[150px]"/></TableCell>
                                 <TableCell><Skeleton className="h-4 w-[100px]"/></TableCell>
                                 <TableCell><Skeleton className="h-4 w-[200px]"/></TableCell>
@@ -38,10 +38,14 @@ function TransactionListSkeleton() {
                         ))}
                     </TableBody>
                     <TableFooter>
-                        <TableHead className="">Total</TableHead>
-                        <TableHead/>
-                        <TableHead/>
-                        <TableHead className="flex items-center justify-end"><Skeleton className="h-4 w-[100px]"/></TableHead>
+                        <TableRow>
+                            <TableCell className="">Total</TableCell>
+                            <TableCell/>
+                            <TableCell/>
+                            <TableCell className="flex items-center justify-end">
+                                <Skeleton className="h-4 w-[100px]"/>
+                            </TableCell>
+                        </TableRow>
                     </TableFooter>
                 </Table>
             </Card>
