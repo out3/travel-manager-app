@@ -52,6 +52,7 @@ mod tests {
         assert_eq!(currency_into, Currency {
             code: iso_currency::Currency::EUR.code().parse().unwrap(),
             symbol: iso_currency::Currency::EUR.symbol().symbol.parse().unwrap(),
+            exponent: iso_currency::Currency::EUR.exponent().unwrap_or_else(|| 0),
         })
     }
 }

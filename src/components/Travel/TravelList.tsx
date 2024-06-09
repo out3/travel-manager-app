@@ -1,36 +1,34 @@
+// React
+import {useState} from 'react';
 // Types
 import {Travel} from '@/types.ts';
-
-// React hooks
-import {useState} from 'react';
-
-// Components
+// UI
 import {Button} from "@/components/ui/button.tsx"
 import {Command, CommandEmpty, CommandGroup, CommandInput, CommandItem,} from "@/components/ui/command.tsx"
 import {Popover, PopoverContent, PopoverTrigger,} from "@/components/ui/popover.tsx"
+// Icons
 import {CaretSortIcon, CheckIcon} from "@radix-ui/react-icons";
 import {cn} from '@/lib/utils.ts';
+
 
 // Props interface
 type TravelAddEditFormProps = {
     travelsList: Travel[]
     currentTravel: Travel | undefined
-    updateCurrentTravel: (travelId: number) => void
+    updateCurrentTravel: (travel: Travel) => void
 }
 
-// function TravelList() {
+
 function TravelList({travelsList, currentTravel, updateCurrentTravel}: TravelAddEditFormProps) {
     // const [currentTravel, setCurrentTravel] = useState<Travel | undefined>();
-    const [openTravelListDropdown, setOpenTravelListDropdown] = useState<Boolean>(false);
+    const [openTravelListDropdown, setOpenTravelListDropdown] = useState<boolean>(false);
     // Variable used to avoid travel searching by its rowid
     const [searchInput, setSearchInput] = useState<string>("");
 
     return (
         <>
-            {/*@ts-ignore*/}
             <Popover open={openTravelListDropdown} onOpenChange={setOpenTravelListDropdown}>
                 <PopoverTrigger asChild>
-                    {/*@ts-ignore*/}
                     <Button
                         variant="outline"
                         role="combobox"
@@ -61,14 +59,14 @@ function TravelList({travelsList, currentTravel, updateCurrentTravel}: TravelAdd
                                     value={travel.country.name + travel.rowid}
                                     // Avoid searching by rowid by deleting numbers in the search input
                                     onSelect={() => {
-                                        updateCurrentTravel(travel.rowid)
+                                        updateCurrentTravel(travel)
                                         setOpenTravelListDropdown(false)
                                     }}
                                 >
                                     {travel.country.name}
                                     <pre className="text-gray-500">
-                                        {travel.start_date ? " | " + travel.start_date.toString() : ""}
-                                        {travel.end_date ? " ~ " + travel.end_date.toString() : ""}
+                                        {travel.start_date ? " | " + travel.start_date.toLocaleDateString() : ""}
+                                        {travel.end_date ? " ~ " + travel.end_date.toLocaleDateString() : ""}
                                     </pre>
                                     <CheckIcon
                                         className={cn(

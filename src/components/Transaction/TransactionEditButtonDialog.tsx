@@ -1,12 +1,11 @@
 // React
 import {useState} from "react";
 // Types, Enums
-import {Travel} from "@/types.ts";
+import {Transaction, TravelId} from "@/types.ts";
 import {DatabaseFormMode} from "@/enums.ts";
 // Components
-import TravelAddEditForm from "@/components/Travel/TravelAddEditForm.tsx";
+import TransactionAddEditForm from "@/components/Transaction/TransactionAddEditForm.tsx";
 // UI
-import {Button} from "@/components/ui/button"
 import {
     Dialog,
     DialogContent,
@@ -20,32 +19,34 @@ import {Pencil1Icon} from "@radix-ui/react-icons";
 
 
 // Props interface
-type TravelEditButtonDialogProps = {
-    currentTravel: Travel,
-    updateCurrentTravel: (travel: Travel) => void
+type TransactionEditButtonDialogProps = {
+    currentTravelId: TravelId
+    transaction: Transaction
+    updateTransaction: (transaction: Transaction) => void
 }
 
 
-function TravelAddButtonDialog(props: TravelEditButtonDialogProps) {
+function TransactionEditButtonDialog(props: TransactionEditButtonDialogProps) {
     // Dialog state
     const [dialogState, setDialogState] = useState(false);
 
     return (<>
         <Dialog open={dialogState} onOpenChange={setDialogState}>
-            <DialogTrigger asChild>
-                <Button variant="secondary" className="h-12 w-12">
-                    <Pencil1Icon className="h-10 w-10"/>
-                </Button>
+            <DialogTrigger asChild className="h-6 w-6 p-1">
+                <Pencil1Icon className="
+                    cursor-pointer
+                    text-neutral-400 hover:text-primary
+                    "
+                />
             </DialogTrigger>
             <DialogContent className="overflow-y-auto max-h-screen">
                 <DialogHeader>
-                    <DialogTitle>Edit travel</DialogTitle>
+                    <DialogTitle>Edit transaction</DialogTitle>
                     <DialogDescription>
-                        {props.currentTravel.country.name}
+                        {props.transaction.description}
                     </DialogDescription>
                 </DialogHeader>
-                {/* Form */}
-                <TravelAddEditForm
+                <TransactionAddEditForm
                     closeDialog={() => setDialogState(false)}
                     formMode={DatabaseFormMode.EDIT}
                     {...props}
@@ -55,4 +56,4 @@ function TravelAddButtonDialog(props: TravelEditButtonDialogProps) {
     </>)
 }
 
-export default TravelAddButtonDialog
+export default TransactionEditButtonDialog

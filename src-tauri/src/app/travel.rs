@@ -7,10 +7,12 @@ use crate::app::country::Country;
 use crate::app::currency::Currency;
 use crate::db;
 
+pub type TravelId = i64;
 
 #[derive(Debug, Clone, FromRow, Serialize)]
 pub struct Travel {
-    rowid: i64,
+    rowid: TravelId,
+    created_at: NaiveDate,
     country: Country,
     currency: Currency,
     start_date: Option<NaiveDate>,
@@ -28,7 +30,7 @@ pub async fn get_travels(
     // Perform query
     let all_travels = sqlx::query_as::<_, Travel>(r#"
         SELECT ROWID, *
-        FROM travel
+        FROM "travel"
     "#,
     )
         .fetch_all(&*conn)
@@ -41,7 +43,7 @@ pub async fn get_travels(
 #[tauri::command]
 pub async fn get_travel(
     conn: tauri::State<'_, db::DbConnection>,
-    travel_id: isize
+    travel_id: TravelId
 ) -> Result<Travel, String> {
     // Lock mutex
     let conn = conn.db.lock().await;
@@ -49,7 +51,7 @@ pub async fn get_travel(
     // Get travel from id
     let travel = sqlx::query_as::<_, Travel>(r#"
         SELECT ROWID, *
-        FROM travel
+        FROM "travel"
         WHERE ROWID = $1
     "#,
     )
@@ -101,11 +103,12 @@ pub async fn create_travel(
 
 
     // Perform query
-    let travel_created = sqlx::query_as::<_, Travel>("
-        INSERT INTO travel (country, currency, start_date, end_date)
-        VALUES ($1, $2, $3, $4)
+    let travel_created = sqlx::query_as::<_, Travel>(r#"
+        INSERT INTO "travel" (created_at, country, currency, start_date, end_date)
+        VALUES ($1, $2, $3, $4, $5)
         RETURNING ROWID, *
-    ")
+    "#)
+        .bind(chrono::Local::now().date_naive()) // Today's date
         .bind(country_wrapper)
         .bind(currency_wrapper)
         .bind(start_date)
@@ -121,7 +124,7 @@ pub async fn create_travel(
 #[tauri::command]
 pub async fn update_travel(
     conn: tauri::State<'_, db::DbConnection>,
-    travel_id: i64,
+    travel_id: TravelId,
     country: String,
     currency: String,
     start_date: String,
@@ -159,12 +162,13 @@ pub async fn update_travel(
 
 
     // Perform query
-    let travel_updated = sqlx::query_as::<_, Travel>("
-        UPDATE travel
-        SET (country, currency, start_date, end_date) = ($2, $3, $4, $5)
+    let travel_updated = sqlx::query_as::<_, Travel>(r#"
+        UPDATE "travel"
+        SET ("country", "currency", "start_date", "end_date")
+            = ($2, $3, $4, $5)
         WHERE ROWID = $1
         RETURNING ROWID, *
-    ")
+    "#)
         .bind(travel_id)
         .bind(country_wrapper)
         .bind(currency_wrapper)

@@ -1,27 +1,24 @@
-// When using the Tauri API npm package:
+// Tauri API
 import {invoke} from '@tauri-apps/api/tauri'
-
-// Types, Enums
-import {Country, Currency, Travel} from '@/types.ts';
-import {TravelFormMode} from '@/enums.ts'
-
-// Hooks
+// React
 import {useEffect, useState} from "react";
 import {useCustomToast} from "@/lib/toastHandlers.tsx"
-
+// Types, Enums
+import {Country, Currency, Travel} from '@/types.ts';
+import {DatabaseFormMode} from '@/enums.ts'
 // Form validation
 import {useForm} from "react-hook-form"
 import {zodResolver} from "@hookform/resolvers/zod"
 import {z} from 'zod';
 import {format} from "date-fns";
-
-// Component
+// UI
 import {Button} from "@/components/ui/button.tsx"
 import {Calendar} from "@/components/ui/calendar.tsx";
-import {CalendarIcon} from '@radix-ui/react-icons';
 import {Form, FormControl, FormField, FormItem, FormLabel, FormMessage} from "@/components/ui/form.tsx"
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select.tsx"
 import {Popover, PopoverContent, PopoverTrigger} from "@/components/ui/popover.tsx";
+// Icons
+import {CalendarIcon} from '@radix-ui/react-icons';
 
 
 // Form schema to specify validation rules
@@ -34,10 +31,12 @@ const formSchema = z.object({
     endDate: z.date().optional(),
 })
 
+
+// Props interface
 type TravelFormProps = {
-    updateCurrentTravel: (travelId: number) => void
+    updateCurrentTravel: (travel: Travel) => void
     closeDialog: () => void
-    formMode: TravelFormMode
+    formMode: DatabaseFormMode
     currentTravel?: Travel
 }
 
@@ -59,7 +58,6 @@ function TravelAddEditForm({updateCurrentTravel, closeDialog, formMode, currentT
     const [isLoaded, setIsLoaded] = useState<boolean>(false);
 
     useEffect(() => {
-        console.log("TravelAddEditForm: useEffect");
         // Get every country and currency on load
         if (!isLoaded) {
             fetchCountries();
@@ -67,7 +65,7 @@ function TravelAddEditForm({updateCurrentTravel, closeDialog, formMode, currentT
             setIsLoaded(true);
         }
         // If formMode set to EDIT, set form values to current travel
-        if (formMode === TravelFormMode.EDIT && currentTravel) {
+        if (formMode === DatabaseFormMode.EDIT && currentTravel) {
             form.setValue("country", String(currentTravel.country.code));
             form.setValue("currency", currentTravel.currency.code);
             if (currentTravel.start_date) {
@@ -97,6 +95,30 @@ function TravelAddEditForm({updateCurrentTravel, closeDialog, formMode, currentT
             .catch((err: string) => toastError(err));
     }
 
+    function travelChangeSuccess(data: Travel) {
+        // Fix date format
+        data.created_at = new Date(data.created_at);
+        data.start_date ? data.start_date = new Date(data.start_date) : null;
+        data.end_date ? data.end_date = new Date(data.end_date) : null;
+        // Execute callback to re-render travels
+        updateCurrentTravel(data);
+        // Display a success notification
+        const msg = (
+            <>
+                {"Country:\t" + data.country.name}
+                {"\nCurrency:\t" + data.currency.code + " (" + data.currency.symbol + ")"}
+                {data.start_date?
+                    (" \nDate:\t\t" + data.start_date.toLocaleDateString()) : null
+                }
+                {data.end_date ?
+                    (" to " + data.end_date.toLocaleDateString()) : null
+                }
+            </>
+        )
+        toastMessage(msg, "The following travel has been edited:");
+        // Close modal
+        closeDialog();
+    }
 
     function createTravel(travel: z.infer<typeof formSchema>): void {
         (invoke('create_travel', {
@@ -106,19 +128,7 @@ function TravelAddEditForm({updateCurrentTravel, closeDialog, formMode, currentT
             endDate: travel.endDate ? travel.endDate.toLocaleDateString() : ""
         }) as Promise<Travel>)
             .then((data: Travel) => {
-                // Display a success notification
-                const msg = (
-                    <>
-                        {data.country.name} - {data.currency.code} ({data.currency.symbol})
-                        {data.start_date ? ("\n" + data.start_date.toLocaleString()) : null}
-                        {data.end_date ? (" to " + data.end_date.toLocaleString()) : null}
-                    </>
-                )
-                toastMessage(msg, "The following travel has been created:");
-                // Close modal
-                closeDialog();
-                // Execute callback to re-render travels
-                updateCurrentTravel(data.rowid);
+                travelChangeSuccess(data);
             })
             .catch((err: string) => toastError(err, "Error while creating travel:"))
     }
@@ -132,28 +142,18 @@ function TravelAddEditForm({updateCurrentTravel, closeDialog, formMode, currentT
             endDate: travel.endDate ? travel.endDate.toLocaleDateString() : ""
         }) as Promise<Travel>)
             .then((data: Travel) => {
-                // Execute callback to re-render travels
-                updateCurrentTravel(data.rowid);
-                const msg = (
-                    <>
-                        {data.country.name} - {data.currency.code} ({data.currency.symbol})
-                        {data.start_date ? ("\n" + data.start_date.toLocaleString()) : null}
-                        {data.end_date ? (" to " + data.end_date.toLocaleString()) : null}
-                    </>
-                )
-                toastMessage(msg, "The following travel has been edited:");
-                closeDialog();
+                travelChangeSuccess(data);
             })
             .catch((err: string) => toastError(err, "Error while updating travel:"))
     }
 
     function onSubmit(travel: z.infer<typeof formSchema>): void {
         // If formMode set to ADD => Create a new travel
-        if (formMode === TravelFormMode.ADD) {
+        if (formMode === DatabaseFormMode.ADD) {
             createTravel(travel);
         }
         // If formMode set to EDIT => Edit the current travel
-        else if (formMode === TravelFormMode.EDIT) {
+        else if (formMode === DatabaseFormMode.EDIT) {
             editTravel(travel);
         }
     }
@@ -167,7 +167,7 @@ function TravelAddEditForm({updateCurrentTravel, closeDialog, formMode, currentT
                         <FormField
                             control={form.control}
                             name="country"
-                            render={({field}: any) => (<FormItem>
+                            render={({field}) => (<FormItem>
                                 <FormLabel>Country</FormLabel>
                                 <Select
                                     onValueChange={field.onChange}
@@ -197,7 +197,7 @@ function TravelAddEditForm({updateCurrentTravel, closeDialog, formMode, currentT
                         <FormField
                             control={form.control}
                             name="currency"
-                            render={({field}: any) => (<FormItem>
+                            render={({field}) => (<FormItem>
                                 <FormLabel>Local currency</FormLabel>
                                 <Select
                                     onValueChange={field.onChange}
@@ -226,7 +226,7 @@ function TravelAddEditForm({updateCurrentTravel, closeDialog, formMode, currentT
                         <FormField
                             control={form.control}
                             name={"startDate"}
-                            render={({field}: any) => (<FormItem>
+                            render={({field}) => (<FormItem>
                                 <FormLabel>Start of trip</FormLabel>
                                 <Popover>
                                     <PopoverTrigger asChild>
@@ -263,7 +263,7 @@ function TravelAddEditForm({updateCurrentTravel, closeDialog, formMode, currentT
                         <FormField
                             control={form.control}
                             name="endDate"
-                            render={({field}: any) => (<FormItem>
+                            render={({field}) => (<FormItem>
                                 <FormLabel>End of trip</FormLabel>
                                 <Popover>
                                     <PopoverTrigger asChild>
@@ -287,12 +287,7 @@ function TravelAddEditForm({updateCurrentTravel, closeDialog, formMode, currentT
                                             selected={field.value}
                                             onSelect={field.onChange}
                                             disabled={(date: Date): boolean => {
-                                                let startDate: Date | undefined = form.getValues("startDate");
-                                                if (startDate) {
-                                                    return date < startDate
-                                                } else {
-                                                    return true
-                                                }
+                                                return form.getValues("startDate") ? date < form.getValues("startDate")! : true;
                                             }}
                                             initialFocus
                                         />

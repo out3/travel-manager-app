@@ -1,16 +1,16 @@
 // React
 import {useState} from "react";
 // Types, Enums
-import {Travel} from "@/types.ts";
+import {TravelId, Transaction} from "@/types.ts";
 import {DatabaseFormMode} from "@/enums.ts";
 // Components
-import TravelAddEditForm from "@/components/Travel/TravelAddEditForm.tsx";
+import TransactionAddEditForm from "@/components/Transaction/TransactionAddEditForm.tsx";
 // UI
 import {Button} from "@/components/ui/button"
 import {
     Dialog,
     DialogContent,
-    DialogDescription,
+    // DialogDescription,
     DialogHeader,
     DialogTitle,
     DialogTrigger
@@ -19,31 +19,30 @@ import {
 import {PlusIcon} from "@radix-ui/react-icons";
 
 
-type TravelAddButtonDialogProps = {
-    updateCurrentTravel: (travel: Travel) => void;
+type TransactionAddButtonDialogProps = {
+    currentTravelId: TravelId;
+    updateTransaction: (transaction: Transaction) => void;
 }
 
 
-function TravelAddButtonDialog(props: TravelAddButtonDialogProps) {
+function TransactionAddButtonDialog(props: TransactionAddButtonDialogProps) {
     // Dialog state
     const [dialogState, setDialogState] = useState(false);
 
     return (<>
         <Dialog open={dialogState} onOpenChange={setDialogState}>
             <DialogTrigger asChild>
-                <Button variant="default" className="h-12 w-12">
-                    <PlusIcon className="h-10 w-10"/>
+                <Button variant="default" className="flex justify-between h-10">
+                    New transaction
+                    <PlusIcon className="h-6 w-6 ml-2"/>
                 </Button>
             </DialogTrigger>
             <DialogContent className="overflow-y-auto max-h-screen">
                 <DialogHeader>
-                    <DialogTitle>Add a new travel</DialogTitle>
-                    <DialogDescription>
-                        Embark on a new journey!
-                    </DialogDescription>
+                    <DialogTitle>Add a new transaction</DialogTitle>
                 </DialogHeader>
                 {/* Form */}
-                <TravelAddEditForm
+                <TransactionAddEditForm
                     closeDialog={() => setDialogState(false)}
                     formMode={DatabaseFormMode.ADD}
                     {...props}
@@ -53,4 +52,4 @@ function TravelAddButtonDialog(props: TravelAddButtonDialogProps) {
     </>)
 }
 
-export default TravelAddButtonDialog
+export default TransactionAddButtonDialog
