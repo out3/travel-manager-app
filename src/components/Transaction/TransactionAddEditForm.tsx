@@ -3,6 +3,7 @@ import {invoke} from '@tauri-apps/api/tauri'
 // React
 import {useEffect, useState} from "react";
 import {useCustomToast} from "@/lib/toastHandlers.tsx"
+import {useAppContext} from "@/context.ts";
 // Types, Enums
 import {Currency, Transaction, TravelId} from '@/types.ts';
 import {DatabaseFormMode} from '@/enums.ts'
@@ -44,14 +45,15 @@ type TransactionFormProps = {
 
 function TransactionAddEditForm({
     currentTravelId,
+    transaction,
     updateTransaction,
     closeDialog,
     formMode,
-    transaction
 }: TransactionFormProps) {
     // Toast hook (corner notification)
     const {toastError, toastMessage} = useCustomToast();
-
+    // Retrieve CurrentTravel
+    const {currentTravel} = useAppContext();
     // List of currencies available for dropdown
     const [currencies, setCurrencies] = useState<Currency[]>([]);
 
@@ -78,6 +80,12 @@ function TransactionAddEditForm({
             if (transaction.notes) {
                 form.setValue("notes", transaction.notes);
             }
+        // If formMode set to ADD
+        } else if (formMode=== DatabaseFormMode.ADD && currentTravel) {
+            // Set currency value to travel's currency
+            form.setValue("currency", currentTravel.currency.code);
+            // Set transaction date to today
+            form.setValue("transactionDate", new Date());
         }
     }, [currencies]);
 
