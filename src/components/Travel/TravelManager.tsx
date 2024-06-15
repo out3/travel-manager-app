@@ -1,6 +1,7 @@
 // Tauri API
 import {invoke} from "@tauri-apps/api/tauri";
 // React
+import {useNavigate} from "react-router-dom";
 import {useEffect, useState} from "react";
 import {useCustomToast} from "@/lib/toastHandlers.tsx";
 import {useAppContext} from "@/context.ts";
@@ -13,6 +14,9 @@ import TravelList from "@/components/Travel/TravelList.tsx";
 
 
 function TravelManager() {
+    // React router redirection
+    const navigate = useNavigate();
+
     // Toast hook (corner notification)
     const {toastError} = useCustomToast();
     
@@ -61,6 +65,10 @@ function TravelManager() {
                     // Else, set the cached travel as the current travel
                     updateCurrentTravel(cachedTravel);
                 }
+
+                // Redirect to the dashboard on app launch
+                navigate("/dashboard", {replace: true});
+
             })
             .catch((err: string) => toastError(err));
     }, [currentTravel, toastError, updateCurrentTravel]);

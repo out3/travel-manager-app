@@ -1,6 +1,6 @@
 // React
 import {useState} from "react";
-import {Outlet, useNavigate} from "react-router-dom";
+import {Outlet} from "react-router-dom";
 // Types
 import {Travel} from "@/types.ts";
 // Components
@@ -10,9 +10,6 @@ import {AppContext} from "@/context.ts";
 
 
 function Root() {
-    // React router redirection
-    const navigate = useNavigate();
-
     // Current travel ID
     const [currentTravel, setCurrentTravel] = useState<Travel | undefined>();
 
@@ -33,10 +30,7 @@ function Root() {
             localStorage.setItem("current-travel", String(travel.rowid))
             // Fetch the travel from its ID
             setCurrentTravel(travel);
-
         }
-        // Redirect to the dashboard
-        navigate("/dashboard", {replace: true});
     }
 
     return (
