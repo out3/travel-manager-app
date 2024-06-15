@@ -1,7 +1,7 @@
 // React
 import {useState} from "react";
+import {useAppContext} from "@/context.ts";
 // Types, Enums
-import {Travel} from "@/types.ts";
 import {DatabaseFormMode} from "@/enums.ts";
 // Components
 import TravelAddEditForm from "@/components/Travel/TravelAddEditForm.tsx";
@@ -19,14 +19,9 @@ import {
 import {Pencil1Icon} from "@radix-ui/react-icons";
 
 
-// Props interface
-type TravelEditButtonDialogProps = {
-    currentTravel: Travel,
-    updateCurrentTravel: (travel: Travel) => void
-}
-
-
-function TravelAddButtonDialog(props: TravelEditButtonDialogProps) {
+function TravelAddButtonDialog() {
+    // Retrieve currentTravel
+    const {currentTravel} = useAppContext();
     // Dialog state
     const [dialogState, setDialogState] = useState(false);
 
@@ -41,14 +36,13 @@ function TravelAddButtonDialog(props: TravelEditButtonDialogProps) {
                 <DialogHeader>
                     <DialogTitle>Edit travel</DialogTitle>
                     <DialogDescription>
-                        {props.currentTravel.country.name}
+                        {currentTravel!.country.name}
                     </DialogDescription>
                 </DialogHeader>
                 {/* Form */}
                 <TravelAddEditForm
                     closeDialog={() => setDialogState(false)}
                     formMode={DatabaseFormMode.EDIT}
-                    {...props}
                 />
             </DialogContent>
         </Dialog>

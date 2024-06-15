@@ -1,7 +1,6 @@
 // React
 import {useState} from "react";
 // Types, Enums
-import {Travel} from "@/types.ts";
 import {DatabaseFormMode} from "@/enums.ts";
 // Components
 import TravelAddEditForm from "@/components/Travel/TravelAddEditForm.tsx";
@@ -19,12 +18,8 @@ import {
 import {PlusIcon} from "@radix-ui/react-icons";
 
 
-type TravelAddButtonDialogProps = {
-    updateCurrentTravel: (travel: Travel) => void;
-}
 
-
-function TravelAddButtonDialog(props: TravelAddButtonDialogProps) {
+function TravelAddButtonDialog() {
     // Dialog state
     const [dialogState, setDialogState] = useState(false);
 
@@ -46,7 +41,6 @@ function TravelAddButtonDialog(props: TravelAddButtonDialogProps) {
                 <TravelAddEditForm
                     closeDialog={() => setDialogState(false)}
                     formMode={DatabaseFormMode.ADD}
-                    {...props}
                 />
             </DialogContent>
         </Dialog>

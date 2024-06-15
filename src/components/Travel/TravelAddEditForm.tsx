@@ -19,6 +19,7 @@ import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/c
 import {Popover, PopoverContent, PopoverTrigger} from "@/components/ui/popover.tsx";
 // Icons
 import {CalendarIcon} from '@radix-ui/react-icons';
+import {useAppContext} from "@/context.ts";
 
 
 // Form schema to specify validation rules
@@ -34,16 +35,16 @@ const formSchema = z.object({
 
 // Props interface
 type TravelFormProps = {
-    updateCurrentTravel: (travel: Travel) => void
     closeDialog: () => void
     formMode: DatabaseFormMode
-    currentTravel?: Travel
 }
 
-function TravelAddEditForm({updateCurrentTravel, closeDialog, formMode, currentTravel}: TravelFormProps) {
+function TravelAddEditForm({closeDialog, formMode}: TravelFormProps) {
     // Toast hook (corner notification)
     const {toastError, toastMessage} = useCustomToast();
 
+    // Retrieve currentTravel and its update function
+    const {currentTravel, updateCurrentTravel} = useAppContext();
     // List of countries available for dropdown
     const [countries, setCountries] = useState<Country[]>([]);
     // List of currencies available for dropdown

@@ -3,6 +3,7 @@ import {invoke} from "@tauri-apps/api/tauri";
 // React
 import {useEffect, useState} from "react";
 import {useCustomToast} from "@/lib/toastHandlers.tsx";
+import {useAppContext} from "@/context.ts";
 // Types
 import {Travel} from "@/types.ts";
 // Components
@@ -11,17 +12,13 @@ import TravelEditButtonDialog from "@/components/Travel/TravelEditButtonDialog.t
 import TravelList from "@/components/Travel/TravelList.tsx";
 
 
-// Props interface
-type TravelManagerProps = {
-    currentTravel: Travel | undefined,
-    updateCurrentTravel: (travel?: Travel) => void
-}
-
-
-function TravelManager({currentTravel, updateCurrentTravel}: TravelManagerProps) {
+function TravelManager() {
     // Toast hook (corner notification)
     const {toastError} = useCustomToast();
-
+    
+    // Retrieve CurrentTravel
+    const {currentTravel, updateCurrentTravel} = useAppContext();
+    
     // List of every travels
     const [travels, setTravels] = useState<Travel[]>([]);
 
@@ -66,16 +63,13 @@ function TravelManager({currentTravel, updateCurrentTravel}: TravelManagerProps)
                 }
             })
             .catch((err: string) => toastError(err));
-    }, [currentTravel]);
+    }, [currentTravel, toastError, updateCurrentTravel]);
 
     function displayEditButton() {
         if (currentTravel) {
             return (
                 <div className="ml-4">
-                    <TravelEditButtonDialog
-                        currentTravel={currentTravel}
-                        updateCurrentTravel={updateCurrentTravel}
-                    />
+                    <TravelEditButtonDialog/>
                 </div>
             )
         }
@@ -86,16 +80,12 @@ function TravelManager({currentTravel, updateCurrentTravel}: TravelManagerProps)
             {/* Travel list dropdown */}
             <TravelList
                 travelsList={travels}
-                currentTravel={currentTravel}
-                updateCurrentTravel={updateCurrentTravel}
             />
             {/* Edit travel button + form */}
             {displayEditButton()}
             {/* Add a new travel button + form */}
             <div className="ml-4">
-                <TravelAddButtonDialog
-                    updateCurrentTravel={updateCurrentTravel}
-                />
+                <TravelAddButtonDialog/>
             </div>
         </>
     )

@@ -9,17 +9,18 @@ import {Popover, PopoverContent, PopoverTrigger,} from "@/components/ui/popover.
 // Icons
 import {CaretSortIcon, CheckIcon} from "@radix-ui/react-icons";
 import {cn} from '@/lib/utils.ts';
+import {useAppContext} from "@/context.ts";
 
 
 // Props interface
 type TravelAddEditFormProps = {
     travelsList: Travel[]
-    currentTravel: Travel | undefined
-    updateCurrentTravel: (travel: Travel) => void
 }
 
 
-function TravelList({travelsList, currentTravel, updateCurrentTravel}: TravelAddEditFormProps) {
+function TravelList({travelsList}: TravelAddEditFormProps) {
+    // Retrieve currentTravel and its update function
+    const {currentTravel, updateCurrentTravel} = useAppContext();
     // const [currentTravel, setCurrentTravel] = useState<Travel | undefined>();
     const [openTravelListDropdown, setOpenTravelListDropdown] = useState<boolean>(false);
     // Variable used to avoid travel searching by its rowid

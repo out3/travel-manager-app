@@ -1,9 +1,7 @@
 // React
-import {useOutletContext} from "react-router-dom";
+import {useAppContext} from "@/context.ts";
 // Types
 import {Travel} from "@/types.ts";
-// Routes
-import {RootContextType} from "@/routes/root.tsx";
 // Components
 import TravelInfo from "@/components/Travel/TravelInfo.tsx";
 import TravelInfoSkeleton from "@/components/Travel/TravelInfoSkeleton.tsx";
@@ -11,7 +9,7 @@ import TravelInfoSkeleton from "@/components/Travel/TravelInfoSkeleton.tsx";
 
 function Dashboard() {
     // Retrieve currentTravel and its update function
-    const {currentTravel} = useOutletContext<RootContextType>();
+    const {currentTravel} = useAppContext();
 
     function displayTravelInfo(travel: Travel | undefined) {
         if (travel) {

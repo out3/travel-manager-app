@@ -6,12 +6,7 @@ import {Travel} from "@/types.ts";
 // Components
 import Navbar from "@/components/Navbar.tsx";
 import TravelManager from "@/components/Travel/TravelManager.tsx";
-
-
-// Context interface (to send data to <Outlet>)
-export type RootContextType = {
-    currentTravel: Travel | undefined,
-};
+import {AppContext} from "@/context.ts";
 
 
 function Root() {
@@ -46,20 +41,22 @@ function Root() {
 
     return (
         <>
-            <div className="flex flex-col justify-center h-screen">
-                {/* Travel Manager : List/edit/add*/}
-                <header className="m-5 flex">
-                    <TravelManager currentTravel={currentTravel} updateCurrentTravel={updateCurrentTravel}/>
-                </header>
-                {/* Router : Content */}
-                <main className="flex-grow mx-5">
-                    <Outlet context={{currentTravel}}/>
-                </main>
-                {/* Navigation bar */}
-                <nav className="m-5 flex justify-center">
-                    <Navbar/>
-                </nav>
-            </div>
+            <AppContext.Provider value={{currentTravel, updateCurrentTravel}}>
+                <div className="flex flex-col justify-center h-screen">
+                    {/* Travel Manager : List/edit/add */}
+                    <header className="m-5 flex">
+                        <TravelManager />
+                    </header>
+                    {/* Router : Content */}
+                    <main className="flex-grow mx-5">
+                        <Outlet/>
+                    </main>
+                    {/* Navigation bar */}
+                    <nav className="m-5 flex justify-center">
+                        <Navbar/>
+                    </nav>
+                </div>
+            </AppContext.Provider>
         </>
     )
 }
