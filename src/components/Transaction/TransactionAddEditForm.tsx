@@ -245,6 +245,7 @@ function TransactionAddEditForm({
                                             <Input
                                                 placeholder="Amount"
                                                 type="number"
+                                                step="any"
                                                 {...field}
                                                 onChange={(e) => {
                                                     field.onChange(e);
