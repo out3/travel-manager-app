@@ -12,6 +12,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - Updated migrations comments
 - Removed the use of `useOutletContext` in favour of `useContext`
+- No more redirection to dashboard when the current travel is changed
+- When creating a new transaction, provide default values for the date and currency (based on the current travel)
+
+### Fix
+- Fixed an issue where the decimal extraction would be incorrect (Floating point math)
+- Fixed an issue where html's input would force a integer value when a float should be allowed
 
 ## [0.4.0] - 2024-06-09 
 ### Added
