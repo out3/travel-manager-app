@@ -1,4 +1,6 @@
 use chrono::NaiveDate;
+use rust_decimal::Decimal;
+use rust_decimal::prelude::FromPrimitive;
 use serde::Serialize;
 use sqlx::FromRow;
 
@@ -66,7 +68,15 @@ pub async fn create_transaction(
     // Verifications
     // Amount decimal must follow currency's exponent
     let currency_exponent = currency_wrapper.exponent;
-    if (amount.fract() > 0.0) && amount.fract().to_string().len() > currency_exponent as usize {
+    // Extract the decimal part
+    // 123 -> 0
+    // 123.4 -> 0.4
+    // 123.45 -> 0.45
+    let amount_decimal = Decimal::from_f64(amount)
+        .ok_or("Amount is not a valid number".to_string())?
+        .fract();
+    // Add +2 to count the "0." part
+    if amount_decimal.to_string().len() > (currency_exponent+2) as usize {
         return Err("Amount decimal must follow currency's exponent".to_string());
     }
 
@@ -114,7 +124,15 @@ pub async fn update_transaction(
     // Verifications
     // Amount decimal must follow currency's exponent
     let currency_exponent = currency_wrapper.exponent;
-    if (amount.fract() > 0.0) && amount.fract().to_string().len() > currency_exponent as usize {
+    // Extract the decimal part
+    // 123 -> 0
+    // 123.4 -> 0.4
+    // 123.45 -> 0.45
+    let amount_decimal = Decimal::from_f64(amount)
+        .ok_or("Amount is not a valid number".to_string())?
+        .fract();
+    // Add +2 to count the "0." part
+    if amount_decimal.to_string().len() > (currency_exponent+2) as usize {
         return Err("Amount decimal must follow currency's exponent".to_string());
     }
 

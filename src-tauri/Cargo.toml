@@ -27,6 +27,8 @@ anyhow = "1.0.76"
 isocountry = { version = "0.3.2" }
 iso_currency = { version = "0.4.4", features = ["iterator"] }
 chrono = { version = "0.4.31", features = ["serde"] }
+rust_decimal = "1.35.0"
+rust_decimal_macros = "1.34.2"
 
 [features]
 # this feature is used for production builds or when `devPath` points to the filesystem and the built-in dev server is disabled.
